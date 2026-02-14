@@ -9,7 +9,7 @@ const AboutFounder = () => {
       {/* Founder Image */}
       <div className="flex justify-center mb-6">
         <img
-          src="/path-to-founder-image.jpg" // <-- replace with actual image path or URL
+          src="/assets/founder.jpeg" // <-- replace with actual image path or URL
           alt="Founder Zeeshan Akram Jasra"
           className="w-48 h-48 md:w-56 md:h-56 rounded-full object-cover border-4 border-[#FFAC1C] shadow-md"
         />
@@ -57,7 +57,7 @@ const AboutFounder = () => {
       {/* Social Media Links */}
       <div className="flex justify-center mt-6 gap-6">
         <a
-          href="https://www.linkedin.com/in/founder-link" // <-- replace with actual LinkedIn
+          href="https://www.linkedin.com/in/zajasra" // <-- replace with actual LinkedIn
           target="_blank"
           rel="noopener noreferrer"
           className="text-[#0077B5] hover:text-[#FFAC1C] transition-colors duration-200"
@@ -65,7 +65,7 @@ const AboutFounder = () => {
           <SiLinkedin size={32} />
         </a>
 
-        <a
+        {/* <a
           href="https://www.facebook.com/founder-link" // <-- replace with actual Facebook
           target="_blank"
           rel="noopener noreferrer"
@@ -81,7 +81,7 @@ const AboutFounder = () => {
           className="text-[#E1306C] hover:text-[#FFAC1C] transition-colors duration-200"
         >
           <LuInstagram size={32} />
-        </a>
+        </a> */}
       </div>
     </div>
   );

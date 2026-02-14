@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import emailjs from "emailjs-com";
 import axios from "axios";
@@ -25,6 +25,32 @@ export default function MemberShipRoaster() {
   const [verifyNo, setVerifyNo] = useState("");
   const [verifyResult, setVerifyResult] = useState(null);
 
+  /* ================= AUTO VERIFY FROM QR ================= */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const emailParam = params.get("verifyEmail");
+    const noParam = params.get("verifyNo");
+
+    if (emailParam && noParam) {
+      setVerifyEmail(emailParam);
+      setVerifyNo(noParam);
+      setShowVerify(true);
+
+      // Directly verify (instead of calling handleVerify)
+      axios
+        .post("http://localhost:5000/api/members/verify", {
+          email: emailParam,
+          paapsNo: Number(noParam),
+        })
+        .then((res) => {
+          setVerifyResult(res.data);
+        })
+        .catch(() => {
+          alert("Verification failed");
+        });
+    }
+  }, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -47,7 +73,7 @@ export default function MemberShipRoaster() {
     let y = 20;
 
     // HEADER
-    doc.setFillColor(255, 172, 28);
+    doc.setFillColor(0, 102, 51); // pakistan inspired
     doc.rect(0, 0, pageWidth, 35, "F");
 
     // ✅ LOGO (LEFT-CENTER IN HEADER)
@@ -245,14 +271,14 @@ export default function MemberShipRoaster() {
       // 3️⃣ Try sending email (DON'T fail registration if email fails)
       try {
         await emailjs.send(
-          "service_an858wf",
-          "template_d7iojcr",
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
           {
             to_email: form.email,
             user_name: `${form.firstName} ${form.lastName}`,
             pdf_file: pdfBase64,
           },
-          "7MEYhkWXB21eIgk6v",
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
         );
       } catch (emailErr) {
         console.error("Email failed:", emailErr);
@@ -431,6 +457,10 @@ export default function MemberShipRoaster() {
             {showBenefits && (
               <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
                 <li>Event Registration Access (Members-Only)</li>
+                <li>
+                  Only PAPPS members will be able to get a FREE E-Certificate
+                </li>
+
                 <li>
                   Never Miss an Opportunity: Priority updates and notifications
                 </li>

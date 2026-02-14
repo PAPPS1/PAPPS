@@ -12,6 +12,8 @@ const MembersData = () => {
   const [editedMember, setEditedMember] = useState({});
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [message, setMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   // Fetch members from backend on mount
   useEffect(() => {
@@ -98,9 +100,62 @@ const MembersData = () => {
     }
   };
 
+  const handleChangePassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      return alert("Password must be at least 6 characters");
+    }
+
+    try {
+      setChangingPassword(true);
+
+      await axios.put(
+        "http://localhost:5000/api/auth/change-password",
+        { newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      alert("Admin password changed successfully!");
+      setNewPassword("");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.msg || "Failed to change password");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fff7ec] px-4 py-10">
       <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-xl p-6 border-t-8 border-[#FFAC1C]">
+        {/* CHANGE ADMIN PASSWORD SECTION */}
+        <div className="mb-6 p-4 border rounded bg-[#fff7ec]">
+          <h3 className="text-lg font-semibold text-[#FFAC1C] mb-3">
+            Change Admin Password
+          </h3>
+
+          <div className="flex gap-3 items-center">
+            <input
+              type="password"
+              placeholder="Enter new password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="border px-3 py-2 rounded w-64"
+            />
+
+            <button
+              onClick={handleChangePassword}
+              disabled={changingPassword}
+              className="bg-[#FFAC1C] text-white px-4 py-2 rounded border"
+            >
+              {changingPassword ? "Updating..." : "Update Password"}
+            </button>
+          </div>
+        </div>
+
         <h2 className="text-3xl font-bold text-center text-[#FFAC1C] mb-8">
           Members Data (Admin Panel)
         </h2>

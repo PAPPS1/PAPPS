@@ -97,7 +97,7 @@ const Navbar = ({ setAuth }) => {
   return (
     <div className="w-full relative">
       {/* TOP BAR */}
-      <div className="w-full bg-[#343434] shadow-md">
+      <div className="w-full bg-[#1f2937] shadow-md">
         <div className="grid grid-cols-[auto_1fr] items-center gap-6 px-20 py-3 max-sm:grid-cols-1 max-sm:text-center">
           <img
             src="/assets/paapslogo.jpg"

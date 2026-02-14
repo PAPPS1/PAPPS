@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import axios from "axios";
+import QRCode from "qrcode";
 
 export default function CertificateGenerator() {
   /* ================= ADMIN AUTH ================= */
@@ -185,6 +186,18 @@ It highlights the participant’s dedication to skill development, academic grow
       doc.text("ZA Jasra", 148, 178, { align: "center" });
       doc.setFont("times", "normal");
       doc.text("President PAPPS", 148, 186, { align: "center" });
+      /* ================= QR CODE ================= */
+
+      // This should be your deployed frontend URL later
+      const verificationURL = `http://localhost:5173/membership?verifyEmail=${encodeURIComponent(email)}&verifyNo=${paapsNo}`;
+
+      const qrDataURL = await QRCode.toDataURL(verificationURL);
+
+      // Position QR bottom-right
+      doc.addImage(qrDataURL, "PNG", 235, 155, 35, 35);
+
+      doc.setFontSize(10);
+      doc.text("Scan to Verify", 252, 195, { align: "center" });
 
       doc.save(`PAAPS-Certificate-${fullName}.pdf`);
     } catch (err) {

@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const images = ["/assets/bg.jpg", "/assets/paapslogo.jpg", "/assets/bg.jpg"];
+const images = [
+  "/assets/slider1.jpeg",
+  "/assets/slider2.jpeg",
+  "/assets/slider3.jpeg",
+];
 
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,7 +30,7 @@ const Home = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 1500);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -35,10 +39,22 @@ const Home = () => {
     {
       title: "Join PAPPS",
       link: "/membership",
+      image: "/assets/joinpapps.jpeg",
     },
-    { title: "Google Drive" },
-    { title: "Study Corner", link: "/studycorner" },
-    { title: "Courses & Trainings", link: "/coursesandtrainings" },
+    {
+      title: "Gallery",
+      image: "/assets/gallery1.png",
+    },
+    {
+      title: "Study Corner",
+      link: "/studycorner",
+      image: "/assets/study.jpeg",
+    },
+    {
+      title: "Courses & Trainings",
+      link: "/coursesandtrainings",
+      image: "/assets/trainings.jpeg",
+    },
   ];
 
   return (
@@ -69,10 +85,12 @@ const Home = () => {
           const CardContent = (
             <div className="w-72 bg-[#FFAC1C] rounded-lg shadow-md  overflow-hidden transition-transform duration-300 hover:scale-105">
               <img
-                src="/assets/bg.jpg"
+                src={card.image}
                 alt="Card"
                 className="w-full h-44 object-cover"
               />
+              {/* Divider */}
+              <div className="h-1 "></div>
               <div className="p-4">
                 <h5 className="text-lg font-semibold mb-2 text-black ">
                   {card.title}
@@ -133,10 +151,20 @@ const Home = () => {
           <ul className="space-y-2">
             {[
               { label: "Certificates", path: "/certificates" },
-              { label: "Link two" },
-              { label: "Link three" },
-              { label: "Link four" },
-              { label: "Link five" },
+              {
+                label: "Facebook",
+                external: "https://www.facebook.com/share/1LnqbMvKXJ/",
+              },
+
+              {
+                label: "LinkedIn",
+                external: "https://www.linkedin.com/company/papps_pak/",
+              },
+              {
+                label: "WhatsApp",
+                external:
+                  "https://whatsapp.com/channel/0029VbCeuh76RGJKubuHt50A",
+              },
             ].map((item, i) => (
               <li
                 key={i}
@@ -145,28 +173,49 @@ const Home = () => {
                 {item.path ? (
                   <Link
                     to={item.path}
-                    className=" no-underline!
-    block
-    w-full
-    h-full
-    px-4
-    py-2
-    rounded
-    bg-white
-    text-[#FFAC1C]!
-    
-    font-bold
-    shadow-sm
-    transition
-    hover:bg-blue-50
-    hover:text-[#FFAC1C]
-    focus:outline-none
-    focus:ring-2
-    focus:ring-[#FFAC1C]
-  "
+                    className="no-underline! block w-full h-full
+  px-4 py-2
+  rounded-lg
+  bg-white
+  text-[#FFAC1C]!
+  font-bold
+  shadow-sm
+  transition-all duration-200 ease-in-out
+  hover:bg-[#FFAC1C]
+  hover:text-white
+  hover:shadow-md
+  active:scale-95
+  cursor-pointer
+  focus:outline-none
+  focus:ring-2
+  focus:ring-[#FFAC1C]"
                   >
                     {item.label}
                   </Link>
+                ) : item.external ? (
+                  <a
+                    href={item.external}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="no-underline! block w-full h-full
+  px-4 py-2
+  rounded-lg
+  bg-white
+  text-[#FFAC1C]!
+  font-bold
+  shadow-sm
+  transition-all duration-200 ease-in-out
+  hover:bg-[#FFAC1C]
+  hover:text-white
+  hover:shadow-md
+  active:scale-95
+  cursor-pointer
+  focus:outline-none
+  focus:ring-2
+  focus:ring-[#FFAC1C]"
+                  >
+                    {item.label}
+                  </a>
                 ) : (
                   item.label
                 )}
@@ -175,6 +224,104 @@ const Home = () => {
           </ul>
         </div>
       </div>
+
+      {/* ================= FOOTER ================= */}
+      <footer className="bg-[#1f2937] text-gray-300 pt-12 pb-6 mt-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* ABOUT */}
+          <div>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              About PAPPS
+            </h3>
+            <p className="text-sm leading-relaxed">
+              Pakistan Association of Phonetics & Phonology Scholars (PAPPS) is
+              a non-profit academic body dedicated to the advancement of
+              phonetics and phonology research in Pakistan. We promote scholarly
+              dialogue, academic networking, and research collaboration at
+              national and international levels.
+            </p>
+          </div>
+
+          {/* QUICK LINKS */}
+          <div>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              Quick Links
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  to="/home"
+                  className="hover:text-[#FFAC1C] transition no-underline!"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/membership"
+                  className="hover:text-[#FFAC1C] transition no-underline!"
+                >
+                  Membership
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/events"
+                  className="hover:text-[#FFAC1C] transition no-underline!"
+                >
+                  Events
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/certificates"
+                  className="hover:text-[#FFAC1C] transition no-underline!"
+                >
+                  Certificates
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/studycorner"
+                  className="hover:text-[#FFAC1C] transition no-underline!"
+                >
+                  Study Corner
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* ACADEMIC FOCUS */}
+          <div>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              Academic Focus
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>Phonetics Research</li>
+              <li>Phonological Theory</li>
+              <li>Speech Sound Analysis</li>
+              <li>Pakistani Languages</li>
+              <li>Workshops & Webinars</li>
+            </ul>
+          </div>
+
+          {/* CONTACT */}
+          <div>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              Contact Us
+            </h3>
+            <p className="text-sm mb-2">Email: papps.pak@gmail.com</p>
+            <p className="text-sm mb-2">Pakistan</p>
+            <p className="text-sm">Academic • Non-Profit • Research-Based</p>
+          </div>
+        </div>
+
+        {/* BOTTOM BAR */}
+        <div className="border-t border-gray-600 mt-10 pt-4 text-center text-sm text-gray-400">
+          © {new Date().getFullYear()} Pakistan Association of Phonetics &
+          Phonology Scholars (PAPPS). All Rights Reserved.
+        </div>
+      </footer>
     </div>
   );
 };
