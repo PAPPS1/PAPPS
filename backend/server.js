@@ -20,12 +20,16 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://papps.vercel.app",
-      "https://papps1.vercel.app", // <-- ADD THIS
+      "https://papps1.vercel.app",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ← ADD OPTIONS
+    allowedHeaders: ["Content-Type", "Authorization"], // ← ADD THIS
     credentials: true,
   }),
 );
+
+//  VERY IMPORTANT FOR RAILWAY
+app.options("*", cors());
 
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
