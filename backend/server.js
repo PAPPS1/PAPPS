@@ -9,7 +9,7 @@ import certificateRoutes from "./routes/certificateRoutes.js";
 import eventRoutes from "./routes/event.js";
 import orgMemberRoutes from "./routes/orgMemberRoutes.js";
 import authRoutes from "./routes/auth.js";
-import memberRoutes from "./routes/memberRoutesTemp.js";
+import memberRoutes from "./routes/memberroutes.js";
 dotenv.config();
 
 const app = express();
@@ -27,9 +27,6 @@ app.use(
     credentials: true,
   }),
 );
-
-//  VERY IMPORTANT FOR RAILWAY
-app.options("*", cors());
 
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
