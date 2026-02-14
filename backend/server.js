@@ -18,12 +18,15 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // for local development
-      "https://papps.vercel.app", // your live frontend
+      "http://localhost:5173",
+      "https://papps.vercel.app",
+      "https://papps1.vercel.app", // <-- ADD THIS
     ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
 );
+
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
