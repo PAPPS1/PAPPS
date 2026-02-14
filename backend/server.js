@@ -9,7 +9,7 @@ import certificateRoutes from "./routes/certificateRoutes.js";
 import eventRoutes from "./routes/event.js";
 import orgMemberRoutes from "./routes/orgMemberRoutes.js";
 import authRoutes from "./routes/auth.js";
-import memberRoutes from "./routes/memberRoutes.js";
+import memberRoutes from "./routes/memberRoutesTemp.js";
 dotenv.config();
 
 const app = express();
