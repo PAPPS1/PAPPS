@@ -191,7 +191,7 @@ It highlights the participant’s dedication to skill development, academic grow
       /* ================= QR CODE ================= */
 
       // This should be your deployed frontend URL later
-      const verificationURL = `http://localhost:5173/membership?verifyEmail=${encodeURIComponent(email)}&verifyNo=${paapsNo}`;
+      const verificationURL = `${import.meta.env.VITE_FRONTEND_URL}/membership?verifyEmail=${encodeURIComponent(email)}&verifyNo=${paapsNo}`;
 
       const qrDataURL = await QRCode.toDataURL(verificationURL);
 
