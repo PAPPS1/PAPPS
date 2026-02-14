@@ -5,7 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import blogRoutes from "./routes/blogRoutes.js";
 import newsRoutes from "./routes/newsRoutes.js";
-import memberRoutes from "./routes/memberroutes.js"; // ✅ FIXED case
+import memberRoutes from "./routes/memberRoutes.js"; // ✅ FIXED case
 import certificateRoutes from "./routes/certificateRoutes.js";
 import eventRoutes from "./routes/event.js";
 import orgMemberRoutes from "./routes/orgMemberRoutes.js";
