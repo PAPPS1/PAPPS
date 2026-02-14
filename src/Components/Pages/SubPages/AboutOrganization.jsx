@@ -13,7 +13,7 @@ const directorates = [
   "Membership",
 ];
 
-const API_URL = "http://localhost:5000/api/org-members";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/org-members`;
 
 const AboutOrganization = () => {
   const auth = JSON.parse(localStorage.getItem("papps_auth"));

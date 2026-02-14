@@ -19,7 +19,10 @@ const MembersData = () => {
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/members");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/members`,
+        );
+
         setMembers(res.data); // assuming res.data is an array of members
       } catch (err) {
         console.error("Failed to fetch members:", err);
@@ -34,7 +37,8 @@ const MembersData = () => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/members/${editingMemberId}`,
+        `${import.meta.env.VITE_API_URL}/api/members/${editingMemberId}`,
+
         editedMember,
       );
       // update members array with updated member from backend
@@ -53,7 +57,8 @@ const MembersData = () => {
     if (!window.confirm("Are you sure you want to remove this member?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/members/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/members/${id}`);
+
       setMembers((prev) => prev.filter((m) => m._id !== id));
       setSelectedMembers((prev) => prev.filter((mid) => mid !== id));
     } catch (err) {
@@ -109,7 +114,8 @@ const MembersData = () => {
       setChangingPassword(true);
 
       await axios.put(
-        "http://localhost:5000/api/auth/change-password",
+        `${import.meta.env.VITE_API_URL}/api/auth/change-password`,
+
         { newPassword },
         {
           headers: {

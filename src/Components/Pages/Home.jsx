@@ -16,7 +16,7 @@ const Home = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/news");
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/news`);
         setNewsItems(res.data);
       } catch (err) {
         console.error("Failed to load news:", err);

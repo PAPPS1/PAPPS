@@ -150,7 +150,7 @@ const EditNews = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/news");
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/news`);
 
         // If DB is empty → insert default news
         if (res.data.length === 0) {
@@ -162,7 +162,8 @@ const EditNews = () => {
           ];
 
           const saved = await axios.post(
-            "http://localhost:5000/api/news/bulk",
+            `${import.meta.env.VITE_API_URL}/api/news/bulk`,
+
             defaultNews,
           );
 
@@ -183,7 +184,10 @@ const EditNews = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/blogs");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/blogs`,
+        );
+
         setBlogs(res.data);
       } catch (err) {
         console.error("Error fetching blogs:", err);
@@ -205,7 +209,11 @@ const EditNews = () => {
 
   const handleNewsSave = async (item) => {
     try {
-      await axios.put(`http://localhost:5000/api/news/${item._id}`, item);
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/news/${item._id}`,
+        item,
+      );
+
       alert("News updated successfully!");
     } catch (err) {
       console.error("Error saving news:", err);
@@ -219,9 +227,13 @@ const EditNews = () => {
       const newNews = { title: "New Heading", paragraph: "New Paragraph" };
 
       // Send POST request
-      const res = await axios.post("http://localhost:5000/api/news", newNews, {
-        headers: { "Content-Type": "application/json" }, // Ensure JSON is sent
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/news`,
+        newNews,
+        {
+          headers: { "Content-Type": "application/json" }, // Ensure JSON is sent
+        },
+      );
 
       // Append newly created news to state
       setNews((prev) => [...prev, res.data]);
@@ -235,7 +247,8 @@ const EditNews = () => {
     if (!window.confirm("Are you sure you want to delete this news item?"))
       return;
     try {
-      await axios.delete(`http://localhost:5000/api/news/${_id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/news/${_id}`);
+
       setNews((prev) => prev.filter((item) => item._id !== _id));
     } catch (err) {
       console.error("Error deleting news:", err);
@@ -261,7 +274,8 @@ const EditNews = () => {
       };
 
       const res = await axios.put(
-        `http://localhost:5000/api/blogs/${blog._id}`,
+        `${import.meta.env.VITE_API_URL}/api/blogs/${blog._id}`,
+
         payload,
         {
           headers: { "Content-Type": "application/json" },
@@ -290,7 +304,11 @@ const EditNews = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:5000/api/blogs", newBlog);
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/blogs`,
+        newBlog,
+      );
+
       setBlogs((prev) => [...prev, res.data]);
       setBlogExpanded((prev) => ({ ...prev, [res.data._id]: true }));
     } catch (err) {
@@ -303,7 +321,8 @@ const EditNews = () => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/blogs/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`);
+
       setBlogs((prev) => prev.filter((b) => b._id !== id));
     } catch (err) {
       console.error("Error deleting blog:", err);

@@ -38,7 +38,7 @@ export default function MemberShipRoaster() {
 
       // Directly verify (instead of calling handleVerify)
       axios
-        .post("http://localhost:5000/api/members/verify", {
+        .post(`${import.meta.env.VITE_API_URL}/api/members/verify`, {
           email: emailParam,
           paapsNo: Number(noParam),
         })
@@ -252,9 +252,12 @@ export default function MemberShipRoaster() {
 
     try {
       // 1️⃣ Save member
-      const response = await axios.post("http://localhost:5000/api/members", {
-        ...form,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/members`,
+        {
+          ...form,
+        },
+      );
 
       if (!response.data || !response.data.paapsNo) {
         throw new Error("No PAAPS number returned from server");
@@ -309,10 +312,13 @@ export default function MemberShipRoaster() {
   /* ================= VERIFY MEMBER LOGIC ================= */
   const handleVerify = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/members/verify", {
-        email: verifyEmail,
-        paapsNo: Number(verifyNo),
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/members/verify`,
+        {
+          email: verifyEmail,
+          paapsNo: Number(verifyNo),
+        },
+      );
       setVerifyResult(res.data);
     } catch (err) {
       console.error(err);

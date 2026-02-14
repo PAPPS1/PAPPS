@@ -44,7 +44,7 @@ export default function CertificateGenerator() {
     if (!topicName) return;
     axios
       .get(
-        `http://localhost:5000/api/certificates/attendance?event=${encodeURIComponent(topicName)}`,
+        `${import.meta.env.VITE_API_URL}/api/certificates/attendance?event=${encodeURIComponent(topicName)}`,
       )
       .then((res) => setAttendanceInput(res.data.emails.join("\n")))
       .catch(() => console.log("No attendance yet"));
@@ -63,7 +63,8 @@ export default function CertificateGenerator() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/certificates/attendance",
+        `${import.meta.env.VITE_API_URL}/api/certificates/attendance`,
+
         {
           event: topicName,
           emails,
@@ -100,7 +101,8 @@ export default function CertificateGenerator() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/certificates/verify",
+        `${import.meta.env.VITE_API_URL}/api/certificates/verify`,
+
         {
           email,
           paapsNo: Number(paapsNo),

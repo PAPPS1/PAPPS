@@ -8,7 +8,10 @@ const Blog = () => {
     // Fetch blogs from backend
     const fetchBlogs = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/blogs");
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/blogs`,
+        );
+
         setBlogs(res.data); // Set blogs from backend
       } catch (err) {
         console.error("Error fetching blogs:", err);

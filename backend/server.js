@@ -17,8 +17,11 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend URL
-    credentials: true, // needed if you plan to send cookies (optional)
+    origin: [
+      "http://localhost:5173", // for local development
+      "https://papps.vercel.app", // your live frontend
+    ],
+    credentials: true,
   }),
 );
 app.use(express.json({ limit: "20mb" }));
