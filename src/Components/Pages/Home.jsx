@@ -17,9 +17,17 @@ const Home = () => {
     const fetchNews = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/news`);
-        setNewsItems(res.data);
+
+        // ✅ Make sure it's an array
+        if (Array.isArray(res.data)) {
+          setNewsItems(res.data);
+        } else {
+          console.error("News API did not return array:", res.data);
+          setNewsItems([]);
+        }
       } catch (err) {
         console.error("Failed to load news:", err);
+        setNewsItems([]); // prevent crash
       }
     };
 
@@ -129,17 +137,21 @@ const Home = () => {
           <hr className="border-t-4 border-blue-700 my-6" />
 
           <ul className="space-y-4">
-            {newsItems.map((item) => (
-              <li
-                key={item._id}
-                className="bg-white rounded p-4 shadow-sm transition hover:bg-blue-50"
-              >
-                <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
-                <p className="text-gray-700 text-sm wrap-break-word whitespace-normal">
-                  {item.paragraph}
-                </p>
-              </li>
-            ))}
+            {Array.isArray(newsItems) && newsItems.length > 0 ? (
+              newsItems.map((item) => (
+                <li
+                  key={item._id}
+                  className="bg-white rounded p-4 shadow-sm transition hover:bg-blue-50"
+                >
+                  <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
+                  <p className="text-gray-700 text-sm wrap-break-word whitespace-normal">
+                    {item.paragraph}
+                  </p>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No news available.</p>
+            )}
           </ul>
         </div>
 
