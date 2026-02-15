@@ -76,18 +76,21 @@ export default function CertificateGenerator() {
   useEffect(() => {
     if (!topicName) return;
 
-    axios
-      .get(
-        `${import.meta.env.VITE_API_URL}/api/certificates/attendance?event=${encodeURIComponent(
-          topicName,
-        )}`,
-      )
-      .then((res) => {
+    const fetchAttendance = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/certificates/attendance?event=${encodeURIComponent(topicName)}`,
+        );
+
         if (Array.isArray(res.data.emails)) {
           setAttendanceInput(res.data.emails.join("\n"));
         }
-      })
-      .catch(() => console.log("No attendance yet"));
+      } catch {
+        console.log("No attendance yet");
+      }
+    };
+
+    fetchAttendance();
   }, [topicName]);
 
   const saveAttendance = async () => {
@@ -246,7 +249,7 @@ It highlights the participant’s dedication to skill development, academic grow
 
   /* ================= UI ================= */
   return (
-    <div className="min-h-screen bg-[#fff7ec] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#fff7ec] mt-5 flex items-center justify-center px-4">
       <div className="bg-white shadow-xl rounded-xl p-8 max-w-md w-full border-t-8 border-[#FFAC1C] space-y-6">
         {isAdmin && (
           <div className="border p-4 rounded-lg space-y-4">
