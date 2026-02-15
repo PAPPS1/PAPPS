@@ -11,42 +11,82 @@ export default function CertificateGenerator() {
     auth?.isLoggedIn &&
     (auth?.role === "admin" || auth?.role === "senior_admin");
 
-  /* ================= CERTIFICATE TOGGLE ================= */
-  const [enabled, setEnabled] = useState(() => {
-    return (
-      JSON.parse(localStorage.getItem("papps_certificates_enabled")) ?? false
-    );
-  });
+  /* ================= CERTIFICATE SETTINGS (FROM DB) ================= */
+  const [enabled, setEnabled] = useState(false);
+  const [topicName, setTopicName] = useState("");
+  const [resourcePerson, setResourcePerson] = useState("");
 
-  const toggleCertificates = () => {
-    const value = !enabled;
-    setEnabled(value);
-    localStorage.setItem("papps_certificates_enabled", JSON.stringify(value));
+  /* ================= LOAD SETTINGS FROM BACKEND ================= */
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/certificates/settings`)
+      .then((res) => {
+        setTopicName(res.data.topicName || "");
+        setResourcePerson(res.data.resourcePerson || "");
+        setEnabled(res.data.enabled || false);
+      })
+      .catch((err) =>
+        console.error("Failed to load certificate settings:", err),
+      );
+  }, []);
+
+  /* ================= SAVE SETTINGS TO BACKEND ================= */
+  const saveCertificateMeta = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/certificates/settings`,
+        {
+          topicName,
+          resourcePerson,
+          enabled,
+        },
+      );
+
+      if (res.data.success) {
+        alert("Certificate settings saved successfully");
+      }
+    } catch (err) {
+      console.error("Failed to save settings:", err);
+      alert("Failed to save settings");
+    }
   };
 
-  /* ================= ADMIN CERTIFICATE META ================= */
-  const [topicName, setTopicName] = useState(
-    () => localStorage.getItem("papps_topic_name") || "",
-  );
-  const [resourcePerson, setResourcePerson] = useState(
-    () => localStorage.getItem("papps_resource_person") || "",
-  );
+  /* ================= TOGGLE ENABLE/DISABLE ================= */
+  const toggleCertificates = async () => {
+    const newValue = !enabled;
+    setEnabled(newValue);
 
-  const saveCertificateMeta = () => {
-    localStorage.setItem("papps_topic_name", topicName);
-    localStorage.setItem("papps_resource_person", resourcePerson);
-    alert("Certificate topic and resource person saved");
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/certificates/settings`,
+        {
+          topicName,
+          resourcePerson,
+          enabled: newValue,
+        },
+      );
+    } catch (err) {
+      console.error("Failed to update toggle:", err);
+    }
   };
 
   /* ================= ADMIN ATTENDANCE ================= */
   const [attendanceInput, setAttendanceInput] = useState("");
+
   useEffect(() => {
     if (!topicName) return;
+
     axios
       .get(
-        `${import.meta.env.VITE_API_URL}/api/certificates/attendance?event=${encodeURIComponent(topicName)}`,
+        `${import.meta.env.VITE_API_URL}/api/certificates/attendance?event=${encodeURIComponent(
+          topicName,
+        )}`,
       )
-      .then((res) => setAttendanceInput(res.data.emails.join("\n")))
+      .then((res) => {
+        if (Array.isArray(res.data.emails)) {
+          setAttendanceInput(res.data.emails.join("\n"));
+        }
+      })
       .catch(() => console.log("No attendance yet"));
   }, [topicName]);
 
@@ -64,7 +104,6 @@ export default function CertificateGenerator() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/certificates/attendance`,
-
         {
           event: topicName,
           emails,
@@ -102,7 +141,6 @@ export default function CertificateGenerator() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/certificates/verify`,
-
         {
           email,
           paapsNo: Number(paapsNo),
@@ -116,6 +154,7 @@ export default function CertificateGenerator() {
       }
 
       const member = res.data.member;
+
       if (!member || !member.firstName || !member.lastName) {
         setError("Member information incomplete");
         return;
@@ -123,7 +162,7 @@ export default function CertificateGenerator() {
 
       const fullName = `${member.firstName} ${member.lastName}`.toUpperCase();
 
-      /* ================= PDF GENERATION ================= */
+      /* ================= PDF GENERATION (UNCHANGED) ================= */
       const doc = new jsPDF("landscape");
 
       const bgImg = "/assets/bg-certificate.png";
@@ -188,16 +227,13 @@ It highlights the participant’s dedication to skill development, academic grow
       doc.text("ZA Jasra", 148, 178, { align: "center" });
       doc.setFont("times", "normal");
       doc.text("President PAPPS", 148, 186, { align: "center" });
-      /* ================= QR CODE ================= */
 
-      // This should be your deployed frontend URL later
-      const verificationURL = `${import.meta.env.VITE_FRONTEND_URL}/membership?verifyEmail=${encodeURIComponent(email)}&verifyNo=${paapsNo}`;
+      /* ================= QR CODE ================= */
+      const verificationURL = `${window.location.origin}/membership?verifyEmail=${encodeURIComponent(email)}&verifyNo=${paapsNo}`;
 
       const qrDataURL = await QRCode.toDataURL(verificationURL);
 
-      // Position QR bottom-right
       doc.addImage(qrDataURL, "PNG", 235, 155, 35, 35);
-
       doc.setFontSize(10);
       doc.text("Scan to Verify", 252, 195, { align: "center" });
 
@@ -208,17 +244,19 @@ It highlights the participant’s dedication to skill development, academic grow
     }
   };
 
+  /* ================= UI ================= */
   return (
     <div className="min-h-screen bg-[#fff7ec] flex items-center justify-center px-4">
       <div className="bg-white shadow-xl rounded-xl p-8 max-w-md w-full border-t-8 border-[#FFAC1C] space-y-6">
-        {/* ================= ADMIN PANEL ================= */}
         {isAdmin && (
           <div className="border p-4 rounded-lg space-y-4">
             <h3 className="text-lg font-bold text-[#FFAC1C]">Admin Controls</h3>
 
             <button
               onClick={toggleCertificates}
-              className={`w-full py-2 rounded text-white font-semibold ${enabled ? "bg-green-600" : "bg-red-500"}`}
+              className={`w-full py-2 rounded text-white font-semibold ${
+                enabled ? "bg-green-600" : "bg-red-500"
+              }`}
             >
               {enabled ? "Certificates Enabled" : "Certificates Disabled"}
             </button>
@@ -263,7 +301,6 @@ It highlights the participant’s dedication to skill development, academic grow
           </div>
         )}
 
-        {/* ================= MEMBER PANEL ================= */}
         <div>
           <h2 className="text-2xl font-bold text-center text-[#FFAC1C] mb-4">
             Download Certificate
