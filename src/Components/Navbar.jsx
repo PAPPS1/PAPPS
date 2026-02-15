@@ -11,6 +11,7 @@ const Navbar = ({ setAuth }) => {
   const handleLogout = () => {
     localStorage.removeItem("papps_auth");
     setAuth(null);
+    setMenuOpen(false); // close menu
     navigate("/home");
   };
 
@@ -18,38 +19,59 @@ const Navbar = ({ setAuth }) => {
     setMenuOpen(!menuOpen);
   };
 
-  // Motion variants for links
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   const linkVariants = {
     hover: { scale: 1.1, color: "#000" },
     tap: { scale: 0.95 },
   };
 
-  // Motion variants for mobile menu
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
     exit: { opacity: 0, y: -20, transition: { duration: 0.2 } },
   };
 
-  const renderLinks = () => (
+  const renderLinks = (isMobile = false) => (
     <>
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-        <Link to="/home" className="nav-link text-white">
+        <Link
+          to="/home"
+          onClick={isMobile ? closeMenu : undefined}
+          className="nav-link text-white"
+        >
           Home
         </Link>
       </Motion.span>
+
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-        <Link to="/about" className="nav-link text-white">
+        <Link
+          to="/about"
+          onClick={isMobile ? closeMenu : undefined}
+          className="nav-link text-white"
+        >
           About
         </Link>
       </Motion.span>
+
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-        <Link to="/blog" className="nav-link text-white">
+        <Link
+          to="/blog"
+          onClick={isMobile ? closeMenu : undefined}
+          className="nav-link text-white"
+        >
           Blogs
         </Link>
       </Motion.span>
+
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-        <Link to="/events" className="nav-link text-white">
+        <Link
+          to="/events"
+          onClick={isMobile ? closeMenu : undefined}
+          className="nav-link text-white"
+        >
           Events
         </Link>
       </Motion.span>
@@ -57,6 +79,7 @@ const Navbar = ({ setAuth }) => {
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
         <Link
           to="/about/organization"
+          onClick={isMobile ? closeMenu : undefined}
           className="nav-link text-white whitespace-nowrap"
         >
           PAPPS Team
@@ -64,12 +87,15 @@ const Navbar = ({ setAuth }) => {
       </Motion.span>
 
       <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-        <Link to="/membership" className="nav-link text-white">
+        <Link
+          to="/membership"
+          onClick={isMobile ? closeMenu : undefined}
+          className="nav-link text-white"
+        >
           MemberShip
         </Link>
       </Motion.span>
 
-      {/* Admin-only links (Edit News visible for all admins) */}
       {(auth?.role === "admin" || auth?.role === "senior_admin") &&
         auth?.isLoggedIn && (
           <Motion.span
@@ -77,16 +103,23 @@ const Navbar = ({ setAuth }) => {
             whileHover="hover"
             whileTap="tap"
           >
-            <Link to="/editnews" className="nav-link text-white">
+            <Link
+              to="/editnews"
+              onClick={isMobile ? closeMenu : undefined}
+              className="nav-link text-white"
+            >
               Edit
             </Link>
           </Motion.span>
         )}
 
-      {/* Senior Admin-only link */}
       {auth?.role === "senior_admin" && auth?.isLoggedIn && (
         <Motion.span variants={linkVariants} whileHover="hover" whileTap="tap">
-          <Link to="/membersdata" className="nav-link text-white">
+          <Link
+            to="/membersdata"
+            onClick={isMobile ? closeMenu : undefined}
+            className="nav-link text-white"
+          >
             Members Data
           </Link>
         </Motion.span>
@@ -112,7 +145,6 @@ const Navbar = ({ setAuth }) => {
 
       {/* NAV BAR */}
       <div className="w-full bg-[#FFAC1C] grid grid-cols-2 items-center py-4 px-4 relative z-20">
-        {/* LEFT */}
         <div className="flex items-center gap-4">
           <button
             className="md:hidden text-3xl text-white"
@@ -126,8 +158,6 @@ const Navbar = ({ setAuth }) => {
           </div>
         </div>
 
-        {/* RIGHT */}
-        {/* RIGHT */}
         <div className="flex justify-end">
           {auth?.isLoggedIn &&
           (auth?.role === "admin" || auth?.role === "senior_admin") ? (
@@ -142,7 +172,10 @@ const Navbar = ({ setAuth }) => {
             </Motion.button>
           ) : (
             <Motion.button
-              onClick={() => navigate("/admin/login")}
+              onClick={() => {
+                closeMenu();
+                navigate("/admin/login");
+              }}
               className="px-4 py-2 bg-[#FFAC1C] text-white rounded
                  hover:bg-white hover:text-black! border border-[#FFAC1C]"
               whileHover={{ scale: 1.05 }}
@@ -162,7 +195,7 @@ const Navbar = ({ setAuth }) => {
             variants={menuVariants}
             className="absolute top-full left-0 w-full bg-[#FFAC1C] flex flex-col gap-4 p-4 md:hidden z-20"
           >
-            {renderLinks()}
+            {renderLinks(true)}
           </Motion.div>
         )}
       </div>

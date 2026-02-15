@@ -17,8 +17,6 @@ const Home = () => {
     const fetchNews = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/news`);
-
-        // ✅ Make sure it's an array
         if (Array.isArray(res.data)) {
           setNewsItems(res.data);
         } else {
@@ -27,14 +25,14 @@ const Home = () => {
         }
       } catch (err) {
         console.error("Failed to load news:", err);
-        setNewsItems([]); // prevent crash
+        setNewsItems([]);
       }
     };
 
     fetchNews();
   }, []);
 
-  // Auto slider every 1.5 seconds
+  // Auto slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -49,10 +47,7 @@ const Home = () => {
       link: "/membership",
       image: "/assets/joinpapps.jpeg",
     },
-    {
-      title: "Gallery",
-      image: "/assets/gallery1.png",
-    },
+    { title: "Gallery", image: "/assets/gallery1.png" },
     {
       title: "Study Corner",
       link: "/studycorner",
@@ -66,16 +61,16 @@ const Home = () => {
   ];
 
   return (
-    <div className="Home w-full border-2 border-black">
+    <div className="Home w-full">
       {/* ================= SLIDER ================= */}
-      <div className="Advertisement bg-[#f1f5f2] p-3 border-b-2 relative overflow-hidden">
-        <div className="relative h-48 w-full overflow-hidden">
+      <div className="bg-[#f1f5f2] p-2 sm:p-3 border-b-2 relative overflow-hidden">
+        <div className="relative h-40 sm:h-48 md:h-56 w-full overflow-hidden">
           <div
             className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {images.map((img, index) => (
-              <div key={index} className="w-full shrink-0 h-48">
+              <div key={index} className="w-full shrink-0 h-full">
                 <img
                   src={img}
                   alt={`Slide ${index + 1}`}
@@ -88,29 +83,26 @@ const Home = () => {
       </div>
 
       {/* ================= CARDS ================= */}
-      <div className="relative z-10 bg-[#f1f5f2] grid grid-cols-4  max-xl:grid-cols-2 gap-4 p-6 border-b-2 justify-items-center">
+      <div className="bg-[#f1f5f2] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-4 sm:p-6 border-b-2 justify-items-center">
         {cards.map((card, i) => {
           const CardContent = (
-            <div className="w-72 bg-[#FFAC1C] rounded-lg shadow-md  overflow-hidden transition-transform duration-300 hover:scale-105">
+            <div className="w-full max-w-xs sm:max-w-sm bg-[#FFAC1C] rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
               <img
                 src={card.image}
                 alt="Card"
-                className="w-full h-44 object-cover"
+                className="w-full h-40 sm:h-44 object-cover"
               />
-              {/* Divider */}
-              <div className="h-1 "></div>
               <div className="p-4">
-                <h5 className="text-lg font-semibold mb-2 text-black ">
+                <h5 className="text-lg font-semibold mb-2 text-black">
                   {card.title}
                 </h5>
-                <p className="text-gray-700 mb-4 ">
+                <p className="text-gray-700 mb-4 text-sm">
                   Some quick example text to build on the card title.
                 </p>
                 <button
                   className="inline-block bg-white text-black px-4 py-2 rounded
-                             transition-all duration-300 ease-in-out
-                             hover:bg-gray-200!
-                             active:scale-95"
+                  transition-all duration-300 ease-in-out
+                  hover:bg-gray-200 active:scale-95"
                 >
                   {card.title}
                 </button>
@@ -118,21 +110,26 @@ const Home = () => {
             </div>
           );
 
-          // If card has a link, wrap in <Link>
           return card.link ? (
-            <Link className="no-underline!" key={i} to={card.link}>
+            <Link
+              key={i}
+              to={card.link}
+              className="w-full flex justify-center no-underline!"
+            >
               {CardContent}
             </Link>
           ) : (
-            <div key={i}>{CardContent}</div>
+            <div key={i} className="w-full flex justify-center">
+              {CardContent}
+            </div>
           );
         })}
       </div>
 
       {/* ================= NEWS & LINKS ================= */}
-      <div className="relative z-10 bg-[#f1f5f2] grid grid-cols-1 md:grid-cols-2 gap-10 p-10 justify-items-center">
+      <div className="bg-[#f1f5f2] grid grid-cols-1 md:grid-cols-2 gap-8 p-4 sm:p-8 md:p-10 justify-items-center">
         {/* NEWS */}
-        <div className="w-full md:w-[70%]">
+        <div className="w-full max-w-2xl">
           <h4 className="text-lg font-semibold">News and Events</h4>
           <hr className="border-t-4 border-blue-700 my-6" />
 
@@ -144,7 +141,7 @@ const Home = () => {
                   className="bg-white rounded p-4 shadow-sm transition hover:bg-blue-50"
                 >
                   <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
-                  <p className="text-gray-700 text-sm wrap-break-word whitespace-normal">
+                  <p className="text-gray-700 text-sm wrap-break-word">
                     {item.paragraph}
                   </p>
                 </li>
@@ -156,8 +153,8 @@ const Home = () => {
         </div>
 
         {/* LINKS */}
-        <div className="w-full md:w-[70%]">
-          <h3 className="text-lg font-medium ">Important Links</h3>
+        <div className="w-full max-w-2xl">
+          <h3 className="text-lg font-medium">Important Links</h3>
           <hr className="border-t-4 border-blue-700 my-6" />
 
           <ul className="space-y-2">
@@ -167,7 +164,6 @@ const Home = () => {
                 label: "Facebook",
                 external: "https://www.facebook.com/share/1LnqbMvKXJ/",
               },
-
               {
                 label: "LinkedIn",
                 external: "https://www.linkedin.com/company/papps_pak/",
@@ -185,51 +181,25 @@ const Home = () => {
                 {item.path ? (
                   <Link
                     to={item.path}
-                    className="no-underline! block w-full h-full
-  px-4 py-2
-  rounded-lg
-  bg-white
-  text-[#FFAC1C]!
-  font-bold
-  shadow-sm
-  transition-all duration-200 ease-in-out
-  hover:bg-[#FFAC1C]
-  hover:text-white
-  hover:shadow-md
-  active:scale-95
-  cursor-pointer
-  focus:outline-none
-  focus:ring-2
-  focus:ring-[#FFAC1C]"
+                    className="block w-full px-4 py-2 rounded-lg bg-white
+                    text-[#FFAC1C]! font-bold shadow-sm
+                    transition-all duration-200
+                    hover:bg-[#FFAC1C] hover:text-white active:scale-95"
                   >
                     {item.label}
                   </Link>
-                ) : item.external ? (
+                ) : (
                   <a
                     href={item.external}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="no-underline! block w-full h-full
-  px-4 py-2
-  rounded-lg
-  bg-white
-  text-[#FFAC1C]!
-  font-bold
-  shadow-sm
-  transition-all duration-200 ease-in-out
-  hover:bg-[#FFAC1C]
-  hover:text-white
-  hover:shadow-md
-  active:scale-95
-  cursor-pointer
-  focus:outline-none
-  focus:ring-2
-  focus:ring-[#FFAC1C]"
+                    className="block w-full px-4 py-2 rounded-lg bg-white
+                    text-[#FFAC1C]! font-bold shadow-sm
+                    transition-all duration-200
+                    hover:bg-[#FFAC1C] hover:text-white active:scale-95"
                   >
                     {item.label}
                   </a>
-                ) : (
-                  item.label
                 )}
               </li>
             ))}
@@ -238,9 +208,8 @@ const Home = () => {
       </div>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-[#1f2937] text-gray-300 pt-12 pb-6 mt-10">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* ABOUT */}
+      <footer className="bg-[#1f2937] text-gray-300 pt-10 pb-6 mt-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">
               About PAPPS
@@ -248,46 +217,37 @@ const Home = () => {
             <p className="text-sm leading-relaxed">
               Pakistan Association of Phonetics & Phonology Scholars (PAPPS) is
               a non-profit academic body dedicated to the advancement of
-              phonetics and phonology research in Pakistan. We promote scholarly
-              dialogue, academic networking, and research collaboration at
-              national and international levels.
+              phonetics and phonology research in Pakistan.
             </p>
           </div>
 
-          {/* QUICK LINKS */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link
-                  to="/home"
-                  className="hover:text-[#FFAC1C] transition no-underline!"
-                >
+                <Link to="/home" className="hover:text-[#FFAC1C] transition">
                   Home
                 </Link>
               </li>
               <li>
                 <Link
                   to="/membership"
-                  className="hover:text-[#FFAC1C] transition no-underline!"
+                  className="hover:text-[#FFAC1C] transition"
                 >
                   Membership
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/events"
-                  className="hover:text-[#FFAC1C] transition no-underline!"
-                >
+                <Link to="/events" className="hover:text-[#FFAC1C] transition">
                   Events
                 </Link>
               </li>
               <li>
                 <Link
                   to="/certificates"
-                  className="hover:text-[#FFAC1C] transition no-underline!"
+                  className="hover:text-[#FFAC1C] transition"
                 >
                   Certificates
                 </Link>
@@ -295,7 +255,7 @@ const Home = () => {
               <li>
                 <Link
                   to="/studycorner"
-                  className="hover:text-[#FFAC1C] transition no-underline!"
+                  className="hover:text-[#FFAC1C] transition"
                 >
                   Study Corner
                 </Link>
@@ -303,7 +263,6 @@ const Home = () => {
             </ul>
           </div>
 
-          {/* ACADEMIC FOCUS */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">
               Academic Focus
@@ -317,7 +276,6 @@ const Home = () => {
             </ul>
           </div>
 
-          {/* CONTACT */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">
               Contact Us
@@ -328,10 +286,8 @@ const Home = () => {
           </div>
         </div>
 
-        {/* BOTTOM BAR */}
         <div className="border-t border-gray-600 mt-10 pt-4 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} Pakistan Association of Phonetics &
-          Phonology Scholars (PAPPS). All Rights Reserved.
+          © {new Date().getFullYear()} PAPPS. All Rights Reserved.
         </div>
       </footer>
     </div>
