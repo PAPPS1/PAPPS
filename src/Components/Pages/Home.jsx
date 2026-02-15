@@ -63,20 +63,18 @@ const Home = () => {
   return (
     <div className="Home w-full">
       {/* ================= SLIDER ================= */}
-      <div className="bg-[#f1f5f2] p-2 sm:p-3 border-b-2 relative overflow-hidden">
-        <div className="relative h-40 sm:h-48 md:h-56 w-full overflow-hidden">
+      <div className="bg-[#f1f5f2] mt-2 border-b-2 relative overflow-hidden">
+        <div className="relative w-full aspect-16/4 sm:aspect-16/4 md:aspect-16/3 overflow-hidden">
           <div
             className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {images.map((img, index) => (
-              <div key={index} className="w-full shrink-0 h-full">
-                <img
-                  src={img}
-                  alt={`Slide ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <div
+                key={index}
+                className="w-full shrink-0 h-full max-md:bg-contain bg-center bg-cover bg-no-repeat "
+                style={{ backgroundImage: `url(${img})` }}
+              />
             ))}
           </div>
         </div>
@@ -87,11 +85,15 @@ const Home = () => {
         {cards.map((card, i) => {
           const CardContent = (
             <div className="w-full max-w-xs sm:max-w-sm bg-[#FFAC1C] rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-              <img
-                src={card.image}
-                alt="Card"
-                className="w-full h-40 sm:h-44 object-cover"
-              />
+              {/* Aspect ratio wrapper for image */}
+              <div className="w-full aspect-4/3 overflow-hidden">
+                <img
+                  src={card.image}
+                  alt="Card"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
               <div className="p-4">
                 <h5 className="text-lg font-semibold mb-2 text-black">
                   {card.title}

@@ -131,13 +131,34 @@ const Navbar = ({ setAuth }) => {
     <div className="w-full relative">
       {/* TOP BAR */}
       <div className="w-full bg-[#1f2937] shadow-md">
-        <div className="grid grid-cols-[auto_1fr] items-center gap-6 px-20 py-3 max-sm:grid-cols-1 max-sm:text-center">
+        <div
+          className="
+      grid grid-cols-1 md:grid-cols-[auto_1fr]
+      items-center
+      gap-3 md:gap-4
+      px-4 sm:px-6 md:px-16 lg:px-24
+      py-3 md:py-4
+      text-center md:text-left
+    "
+        >
           <img
             src="/assets/paapslogo.jpg"
             alt="PAPPS Logo"
-            className="h-40 w-auto object-contain max-sm:mx-auto"
+            className="
+        h-20 sm:h-24 md:h-32 lg:h-42
+        w-auto object-contain
+        mx-auto md:mx-0
+      "
           />
-          <h1 className="text-white text-lg md:text-xl font-semibold tracking-wide">
+
+          <h1
+            className="
+        text-white
+        text-[11px] sm:text-sm md:text-lg lg:text-xl
+        font-semibold tracking-wide
+        leading-tight
+      "
+          >
             Pakistan Association of Phonetics &amp; Phonology Scholars
           </h1>
         </div>
