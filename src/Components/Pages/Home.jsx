@@ -64,7 +64,7 @@ const Home = () => {
     <div className="Home w-full">
       {/* ================= SLIDER ================= */}
       <div className="bg-[#f1f5f2] mt-2 border-b-2 relative overflow-hidden">
-        <div className="relative w-full aspect-16/4 sm:aspect-16/4 md:aspect-16/3 overflow-hidden">
+        <div className="relative w-full max-sm:aspect-16/4 sm:aspect-16/4 md:aspect-16/3 overflow-hidden">
           <div
             className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -72,7 +72,7 @@ const Home = () => {
             {images.map((img, index) => (
               <div
                 key={index}
-                className="w-full shrink-0 h-full max-md:bg-contain bg-center bg-cover bg-no-repeat "
+                className="w-full shrink-0 h-full max-md:bg-contain bg-center bg-contain bg-no-repeat "
                 style={{ backgroundImage: `url(${img})` }}
               />
             ))}
@@ -159,7 +159,7 @@ const Home = () => {
           <h3 className="text-lg font-medium">Important Links</h3>
           <hr className="border-t-4 border-blue-700 my-6" />
 
-          <ul className="space-y-2">
+          <ul className="space-y-2 no-underline!">
             {[
               { label: "Certificates", path: "/certificates" },
               {
@@ -186,7 +186,7 @@ const Home = () => {
                     className="block w-full px-4 py-2 rounded-lg bg-white
                     text-[#FFAC1C]! font-bold shadow-sm
                     transition-all duration-200
-                    hover:bg-[#FFAC1C] hover:text-white active:scale-95"
+                    hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
                   >
                     {item.label}
                   </Link>
@@ -198,7 +198,7 @@ const Home = () => {
                     className="block w-full px-4 py-2 rounded-lg bg-white
                     text-[#FFAC1C]! font-bold shadow-sm
                     transition-all duration-200
-                    hover:bg-[#FFAC1C] hover:text-white active:scale-95"
+                    hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
                   >
                     {item.label}
                   </a>

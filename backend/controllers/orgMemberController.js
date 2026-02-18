@@ -14,6 +14,7 @@ export const getOrgMembers = async (req, res) => {
 // ADD new member
 export const addOrgMember = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
     const {
       name,
       role,
@@ -22,6 +23,8 @@ export const addOrgMember = async (req, res) => {
       description,
       affiliation,
       image,
+      linkedin,
+      website,
     } = req.body;
 
     if (!name || !role || !roleCategory) {
@@ -38,6 +41,8 @@ export const addOrgMember = async (req, res) => {
       description,
       affiliation,
       image,
+      linkedin,
+      website,
     });
 
     await newMember.save();
@@ -53,6 +58,8 @@ export const addOrgMember = async (req, res) => {
 // UPDATE member
 export const updateOrgMember = async (req, res) => {
   try {
+    console.log("UPDATE BODY:", req.body);
+
     const {
       name,
       role,
@@ -61,7 +68,10 @@ export const updateOrgMember = async (req, res) => {
       description,
       affiliation,
       image,
+      linkedin,
+      website,
     } = req.body;
+
     const { id } = req.params;
 
     if (!id || !name || !role || !roleCategory) {
@@ -78,6 +88,10 @@ export const updateOrgMember = async (req, res) => {
     member.description = description;
     member.affiliation = affiliation;
     member.image = image;
+
+    // 🔥 Only update if actually sent
+    if (linkedin !== undefined) member.linkedin = linkedin;
+    if (website !== undefined) member.website = website;
 
     await member.save();
 

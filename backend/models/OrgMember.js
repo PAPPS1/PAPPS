@@ -2,13 +2,15 @@
 import mongoose from "mongoose";
 
 const orgMemberSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  role: { type: String, required: true },
-  roleCategory: { type: String, required: true }, // President, Directorates, etc.
+  name: String,
+  affiliation: String,
+  role: String,
   tenure: String,
   description: String,
-  affiliation: String,
   image: String,
+  roleCategory: String,
+  linkedin: { type: String, default: "" },
+  website: { type: String, default: "" },
 });
 
 export default mongoose.model("OrgMember", orgMemberSchema);

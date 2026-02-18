@@ -35,6 +35,8 @@ const AboutOrganization = () => {
     tenure: "",
     description: "",
     image: "",
+    linkedin: "",
+    website: "",
   });
 
   // Load members data
@@ -212,7 +214,18 @@ const AboutOrganization = () => {
   };
 
   const openEditModal = (member) => {
-    setNewMember(member);
+    setNewMember({
+      name: member.name || "",
+      affiliation: member.affiliation || "",
+      role: member.role || "",
+      tenure: member.tenure || "",
+      description: member.description || "",
+      image: member.image || "",
+      linkedin: member.linkedin || "",
+      website: member.website || "",
+      _id: member._id,
+    });
+
     setActiveRole(member.roleCategory);
     setEditModalOpen(true);
   };
@@ -225,6 +238,8 @@ const AboutOrganization = () => {
       tenure: "",
       description: "",
       image: "",
+      linkedin: "",
+      website: "",
     });
   };
 
@@ -431,6 +446,28 @@ const AboutOrganization = () => {
               {activeProfile.description}
             </p>
 
+            {activeProfile.linkedin && (
+              <a
+                href={activeProfile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-blue-600 hover:underline text-sm"
+              >
+                🔗 LinkedIn Profile
+              </a>
+            )}
+
+            {activeProfile.website && (
+              <a
+                href={activeProfile.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-green-600 hover:underline text-sm"
+              >
+                🌐 Personal Website
+              </a>
+            )}
+
             {/* Share Link Button */}
             <button
               onClick={() => copyMemberLink(activeProfile)}
@@ -544,7 +581,15 @@ const MemberForm = ({
 }) => (
   <Modal title={title} onClose={onClose} size="small">
     <div className="space-y-3">
-      {["name", "affiliation", "role", "tenure", "description"].map((field) => (
+      {[
+        "name",
+        "affiliation",
+        "role",
+        "tenure",
+        "description",
+        "linkedin",
+        "website",
+      ].map((field) => (
         <div key={field}>
           <label className="block text-sm font-semibold mb-1 capitalize">
             {field}
