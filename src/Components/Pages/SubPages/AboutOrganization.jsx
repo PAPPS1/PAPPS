@@ -428,94 +428,53 @@ const AboutOrganization = () => {
           onClose={handleCloseProfile}
           size="small"
         >
-          <div className="space-y-5 text-center">
-            {/* Profile Image */}
+          <div className="space-y-4 text-center">
             {activeProfile.image && (
               <img
                 src={activeProfile.image}
                 alt={activeProfile.name}
-                className="w-32 h-32 mx-auto rounded-full object-cover 
-          border-4 border-green-100 shadow-lg"
+                className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-green-100 shadow-md"
               />
             )}
+            <p className="text-green-700 font-semibold">{activeProfile.role}</p>
+            {activeProfile.affiliation && (
+              <p className="text-gray-600">{activeProfile.affiliation}</p>
+            )}
+            <p className="text-sm text-gray-500">
+              Tenure: {activeProfile.tenure}
+            </p>
+            <p className="text-gray-700 leading-relaxed text-justify">
+              {activeProfile.description}
+            </p>
 
-            {/* Role */}
-            <div>
-              <p className="text-lg font-semibold text-green-700">
-                {activeProfile.role}
-              </p>
-              {activeProfile.affiliation && (
-                <p className="text-gray-600 mt-1">
-                  {activeProfile.affiliation}
-                </p>
-              )}
-              <p className="text-sm text-gray-500 mt-1">
-                Tenure: {activeProfile.tenure}
-              </p>
-            </div>
-
-            {/* Description */}
-            {activeProfile.description && (
-              <p className="text-gray-700 leading-relaxed text-justify px-2">
-                {activeProfile.description}
-              </p>
+            {activeProfile.linkedin && (
+              <a
+                href={activeProfile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-blue-600 hover:underline text-sm"
+              >
+                🔗 LinkedIn Profile
+              </a>
             )}
 
-            {/* Social Icons */}
-            {(activeProfile.linkedin || activeProfile.website) && (
-              <div className="flex justify-center gap-6 pt-2">
-                {activeProfile.linkedin?.trim() && (
-                  <a
-                    href={activeProfile.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="
-                flex items-center justify-center
-                w-10 h-10 rounded-full
-                bg-blue-100 text-blue-600
-                hover:bg-blue-600 hover:text-white
-                transition duration-300
-                hover:scale-110
-              "
-                    title="LinkedIn"
-                  >
-                    <FaLinkedin size={18} />
-                  </a>
-                )}
-
-                {activeProfile.website?.trim() && (
-                  <a
-                    href={activeProfile.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="
-                flex items-center justify-center
-                w-10 h-10 rounded-full
-                bg-green-100 text-green-600
-                hover:bg-green-600 hover:text-white
-                transition duration-300
-                hover:scale-110
-              "
-                    title="Website"
-                  >
-                    <FaGlobe size={18} />
-                  </a>
-                )}
-              </div>
+            {activeProfile.website && (
+              <a
+                href={activeProfile.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-green-600 hover:underline text-sm"
+              >
+                🌐 Personal Website
+              </a>
             )}
 
-            {/* Copy Link Button */}
+            {/* Share Link Button */}
             <button
               onClick={() => copyMemberLink(activeProfile)}
-              className="
-          mt-4 inline-flex items-center gap-2
-          px-4 py-2 rounded-lg
-          bg-blue-600 text-white text-sm font-medium
-          hover:bg-blue-700 transition duration-300
-        "
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
             >
-              <FaCopy size={14} />
-              Copy Profile Link
+              📋 Copy Profile Link
             </button>
           </div>
         </Modal>
