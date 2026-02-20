@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import { FaLinkedin, FaGlobe } from "react-icons/fa";
-
+import { TbWorldWww } from "react-icons/tb";
 const directorates = [
   "IT & Systems",
   "Finance / Finance Officer",
@@ -11,7 +11,6 @@ const directorates = [
   "International Collaboration",
   "Social Media",
   "Public Relations",
-  "Membership",
 ];
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/org-members`;
@@ -298,188 +297,425 @@ const AboutOrganization = () => {
     membersData.filter((m) => m.roleCategory === role);
 
   return (
-    <div className="max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-xl border-l-8 border-[#FFAC1C]">
-      <h2 className="text-4xl font-extrabold text-green-700 mb-6">
-        Organisational Structure
-      </h2>
+    <>
+      <div className="hidden md:block">
+        <div className="max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-xl border-l-8 border-[#FFAC1C]">
+          <h2 className="text-4xl font-extrabold text-green-700 mb-6">
+            Organisational Structure
+          </h2>
 
-      <p className="text-gray-600 text-lg leading-relaxed mb-8 text-justify">
-        PAPPS follows an internationally recognised academic governance model.
-        All positions are honorary, voluntary, and designed to promote scholarly
-        excellence, transparency, and collaboration.
-      </p>
+          <p className="text-gray-600 text-lg leading-relaxed mb-8 text-justify">
+            PAPPS follows an internationally recognised academic governance
+            model. All positions are honorary, voluntary, and designed to
+            promote scholarly excellence, transparency, and collaboration.
+          </p>
 
-      {/* ================= MAIN ROLES ================= */}
-      <AnimatePresence mode="wait">
-        {!showDirectorates && (
-          <Motion.div
-            key="mainRoles"
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 40 }}
-            transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {roles.map((role) => (
-              <div
-                key={role}
-                onClick={() => handleRoleClick(role)}
-                className="cursor-pointer p-6 rounded-xl border border-gray-200 bg-linear-to-br from-white to-green-50 hover:shadow-lg hover:border-green-600 transition"
+          {/* ================= MAIN ROLES ================= */}
+          <AnimatePresence mode="wait">
+            {!showDirectorates && (
+              <Motion.div
+                key="mainRoles"
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 40 }}
+                transition={{ duration: 0.4 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
-                <h3 className="text-xl font-bold text-green-700 mb-2">
-                  {role}
+                {roles.map((role) => (
+                  <div
+                    key={role}
+                    onClick={() => handleRoleClick(role)}
+                    className="cursor-pointer p-6 rounded-xl border border-gray-200 bg-linear-to-br from-white to-green-50 hover:shadow-lg hover:border-green-600 transition"
+                  >
+                    <h3 className="text-xl font-bold text-green-700 mb-2">
+                      {role}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Click to view members and details
+                    </p>
+                  </div>
+                ))}
+              </Motion.div>
+            )}
+
+            {showDirectorates && (
+              <Motion.div
+                key="directorates"
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.4 }}
+              >
+                <button
+                  onClick={handleBackToMain}
+                  className="mb-6 text-green-700 font-semibold hover:underline"
+                >
+                  ← Back to Main Categories
+                </button>
+
+                <h3 className="text-2xl font-bold text-green-700 mb-6">
+                  Directorates
                 </h3>
-                <p className="text-sm text-gray-600">
-                  Click to view members and details
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {directorates.map((dir) => (
+                    <div
+                      key={dir}
+                      onClick={() => handleDirectorateClick(dir)}
+                      className="cursor-pointer p-6 rounded-xl border border-gray-200 bg-linear-to-br from-white to-green-50 hover:shadow-lg hover:border-green-600 transition"
+                    >
+                      <h4 className="text-lg font-bold text-green-700 mb-2">
+                        {dir}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Click to view members and details
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ================= ROLE MODAL ================= */}
+          {activeRole && (
+            <Modal title={activeRole} onClose={handleCloseRole}>
+              <MembersGrid
+                members={membersByRole(activeRole)}
+                onProfileClick={handleProfileClick}
+                onDelete={handleDeleteMember}
+                onEdit={openEditModal}
+                onCopyLink={copyMemberLink}
+                isAdmin={isAdmin}
+              />
+
+              {isAdmin && (
+                <button
+                  onClick={() => setAddModalOpen(true)}
+                  className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                >
+                  + Add Member
+                </button>
+              )}
+            </Modal>
+          )}
+
+          {/* ================= ADD / EDIT MODALS ================= */}
+          {addModalOpen && (
+            <MemberForm
+              title={`Add Member to ${activeRole}`}
+              member={newMember}
+              setMember={setNewMember}
+              onClose={() => setAddModalOpen(false)}
+              onSubmit={handleAddMember}
+              handleImageUpload={handleImageUpload}
+            />
+          )}
+          {editModalOpen && (
+            <MemberForm
+              title={`Edit Member in ${activeRole}`}
+              member={newMember}
+              setMember={setNewMember}
+              onClose={() => setEditModalOpen(false)}
+              onSubmit={handleEditMember}
+              handleImageUpload={handleImageUpload}
+            />
+          )}
+
+          {/* ================= PROFILE MODAL ================= */}
+          {activeProfile && (
+            <Modal
+              title={activeProfile.name}
+              onClose={handleCloseProfile}
+              size="small"
+            >
+              <div className="space-y-4 text-center">
+                {activeProfile.image && (
+                  <img
+                    src={activeProfile.image}
+                    alt={activeProfile.name}
+                    className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-green-100 shadow-md"
+                  />
+                )}
+                <p className="text-green-700 font-semibold">
+                  {activeProfile.role}
                 </p>
+                {activeProfile.affiliation && (
+                  <p className="text-gray-600">{activeProfile.affiliation}</p>
+                )}
+                <p className="text-sm text-gray-500">
+                  Tenure: {activeProfile.tenure}
+                </p>
+                <p className="text-gray-700 leading-relaxed text-justify">
+                  {activeProfile.description}
+                </p>
+
+                {activeProfile.linkedin && (
+                  <a
+                    href={activeProfile.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block items-center justify-center  text-blue-600 hover:underline text-4xl"
+                  >
+                    <FaLinkedin />
+                  </a>
+                )}
+
+                {activeProfile.website && (
+                  <a
+                    href={activeProfile.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-green-600 hover:underline text-4xl"
+                  >
+                    <TbWorldWww />
+                  </a>
+                )}
+
+                {/* Share Link Button */}
+                <button
+                  onClick={() => copyMemberLink(activeProfile)}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                >
+                  📋 Copy Profile Link
+                </button>
               </div>
-            ))}
-          </Motion.div>
+            </Modal>
+          )}
+        </div>
+      </div>
+      {/* ================= MOBILE VIEW ================= */}
+      <div className="block md:hidden bg-gradient-to-b from-[#fff8ef] to-white min-h-screen">
+        {/* ===== Header ===== */}
+        <div className="px-4 pt-4 pb-3 bg-white border-b border-orange-100">
+          <h2 className="text-base font-bold text-slate-800">
+            Organisational Structure
+          </h2>
+          <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+            Academic governance & leadership directory
+          </p>
+        </div>
+
+        {/* ===== ROLE GRID ===== */}
+        {!showDirectorates && !activeRole && (
+          <div className="px-3 py-4">
+            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
+              {roles.map((role) => (
+                <div
+                  key={role}
+                  onClick={() => handleRoleClick(role)}
+                  className="bg-white rounded-xl p-3 border border-orange-100 shadow-sm active:scale-95 transition"
+                >
+                  <h3 className="text-sm font-semibold text-green-700 break-words">
+                    {role}
+                  </h3>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
-        {showDirectorates && (
-          <Motion.div
-            key="directorates"
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.4 }}
-          >
+        {/* ===== DIRECTORATES ===== */}
+        {showDirectorates && !activeRole && (
+          <div className="px-3 py-4">
             <button
               onClick={handleBackToMain}
-              className="mb-6 text-green-700 font-semibold hover:underline"
+              className="text-xs text-green-700 mb-3"
             >
-              ← Back to Main Categories
+              ← Back
             </button>
 
-            <h3 className="text-2xl font-bold text-green-700 mb-6">
-              Directorates
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3">
               {directorates.map((dir) => (
                 <div
                   key={dir}
                   onClick={() => handleDirectorateClick(dir)}
-                  className="cursor-pointer p-6 rounded-xl border border-gray-200 bg-linear-to-br from-white to-green-50 hover:shadow-lg hover:border-green-600 transition"
+                  className="bg-white rounded-xl p-3 border border-orange-100 shadow-sm active:scale-95 transition"
                 >
-                  <h4 className="text-lg font-bold text-green-700 mb-2">
+                  <h4 className="text-sm font-semibold text-green-700 break-words">
                     {dir}
                   </h4>
-                  <p className="text-sm text-gray-600">
-                    Click to view members and details
-                  </p>
                 </div>
               ))}
             </div>
-          </Motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ================= ROLE MODAL ================= */}
-      {activeRole && (
-        <Modal title={activeRole} onClose={handleCloseRole}>
-          <MembersGrid
-            members={membersByRole(activeRole)}
-            onProfileClick={handleProfileClick}
-            onDelete={handleDeleteMember}
-            onEdit={openEditModal}
-            onCopyLink={copyMemberLink}
-            isAdmin={isAdmin}
-          />
-
-          {isAdmin && (
-            <button
-              onClick={() => setAddModalOpen(true)}
-              className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-            >
-              + Add Member
-            </button>
-          )}
-        </Modal>
-      )}
-
-      {/* ================= ADD / EDIT MODALS ================= */}
-      {addModalOpen && (
-        <MemberForm
-          title={`Add Member to ${activeRole}`}
-          member={newMember}
-          setMember={setNewMember}
-          onClose={() => setAddModalOpen(false)}
-          onSubmit={handleAddMember}
-          handleImageUpload={handleImageUpload}
-        />
-      )}
-      {editModalOpen && (
-        <MemberForm
-          title={`Edit Member in ${activeRole}`}
-          member={newMember}
-          setMember={setNewMember}
-          onClose={() => setEditModalOpen(false)}
-          onSubmit={handleEditMember}
-          handleImageUpload={handleImageUpload}
-        />
-      )}
-
-      {/* ================= PROFILE MODAL ================= */}
-      {activeProfile && (
-        <Modal
-          title={activeProfile.name}
-          onClose={handleCloseProfile}
-          size="small"
-        >
-          <div className="space-y-4 text-center">
-            {activeProfile.image && (
-              <img
-                src={activeProfile.image}
-                alt={activeProfile.name}
-                className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-green-100 shadow-md"
-              />
-            )}
-            <p className="text-green-700 font-semibold">{activeProfile.role}</p>
-            {activeProfile.affiliation && (
-              <p className="text-gray-600">{activeProfile.affiliation}</p>
-            )}
-            <p className="text-sm text-gray-500">
-              Tenure: {activeProfile.tenure}
-            </p>
-            <p className="text-gray-700 leading-relaxed text-justify">
-              {activeProfile.description}
-            </p>
-
-            {activeProfile.linkedin && (
-              <a
-                href={activeProfile.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-blue-600 hover:underline text-sm"
-              >
-                🔗 LinkedIn Profile
-              </a>
-            )}
-
-            {activeProfile.website && (
-              <a
-                href={activeProfile.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-green-600 hover:underline text-sm"
-              >
-                🌐 Personal Website
-              </a>
-            )}
-
-            {/* Share Link Button */}
-            <button
-              onClick={() => copyMemberLink(activeProfile)}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
-            >
-              📋 Copy Profile Link
-            </button>
           </div>
-        </Modal>
-      )}
-    </div>
+        )}
+
+        {/* ===== MEMBERS GRID ===== */}
+        {activeRole && (
+          <div className="px-3 py-4">
+            <button
+              onClick={handleCloseRole}
+              className="text-xs text-green-700 mb-3"
+            >
+              ← Back
+            </button>
+
+            <h3 className="text-sm font-semibold text-slate-700 mb-3">
+              {activeRole}
+            </h3>
+
+            <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-3">
+              {membersByRole(activeRole).map((m) => (
+                <div
+                  key={m._id}
+                  onClick={() => handleProfileClick(m)}
+                  className="relative bg-white rounded-xl p-3 border border-orange-100 shadow-sm active:scale-95 transition overflow-hidden"
+                >
+                  {isAdmin && (
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(m);
+                        }}
+                        className="text-blue-600 text-sm"
+                      >
+                        ✎
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteMember(m);
+                        }}
+                        className="text-red-600 text-sm"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    {m.image && (
+                      <img
+                        src={m.image}
+                        alt={m.name}
+                        className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full object-cover border border-green-100 shrink-0"
+                      />
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-slate-800 leading-tight line-clamp-2">
+                        {m.name}
+                      </h4>
+                      <p className="text-[11px] text-green-700 truncate">
+                        {m.role}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {isAdmin && (
+              <button
+                onClick={() => setAddModalOpen(true)}
+                className="mt-4 w-full bg-[#FFAC1C] text-white py-2 rounded-xl text-sm shadow active:scale-95 transition"
+              >
+                + Add Member
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ===== MOBILE PROFILE MODAL ===== */}
+        {activeProfile && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-end">
+            <div className="bg-white w-full rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-bold text-slate-800 break-words">
+                  {activeProfile.name}
+                </h3>
+                <button
+                  onClick={handleCloseProfile}
+                  className="text-lg font-bold text-gray-400"
+                >
+                  ×
+                </button>
+              </div>
+
+              {activeProfile.image && (
+                <img
+                  src={activeProfile.image}
+                  alt={activeProfile.name}
+                  className="w-20 h-20 mx-auto rounded-full object-cover mb-3 border border-green-100"
+                />
+              )}
+
+              <p className="text-green-700 font-semibold text-sm text-center">
+                {activeProfile.role}
+              </p>
+
+              <p className="text-[11px] text-slate-700 mt-3 leading-relaxed break-words">
+                {activeProfile.description}
+              </p>
+
+              <div className="mt-4 space-y-2">
+                {activeProfile.linkedin && (
+                  <a
+                    href={
+                      activeProfile.linkedin.startsWith("http")
+                        ? activeProfile.linkedin
+                        : `https://${activeProfile.linkedin}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center no-underline! text-sm bg-blue-600 text-white py-2 rounded-xl"
+                  >
+                    LinkedIn
+                  </a>
+                )}
+
+                {activeProfile.website && (
+                  <a
+                    href={
+                      activeProfile.website.startsWith("http")
+                        ? activeProfile.website
+                        : `https://${activeProfile.website}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center no-underline! text-sm bg-green-600 text-white py-2 rounded-xl"
+                  >
+                    Website
+                  </a>
+                )}
+
+                <button
+                  onClick={() => copyMemberLink(activeProfile)}
+                  className="block w-full text-center text-sm bg-[#FFAC1C] text-white py-2 rounded-xl"
+                >
+                  Copy Profile Link
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== ADD / EDIT MODALS (MOBILE SYNC) ===== */}
+        {addModalOpen && (
+          <MemberForm
+            title={`Add Member to ${activeRole}`}
+            member={newMember}
+            setMember={setNewMember}
+            onClose={() => setAddModalOpen(false)}
+            onSubmit={handleAddMember}
+            handleImageUpload={handleImageUpload}
+          />
+        )}
+
+        {editModalOpen && (
+          <MemberForm
+            title={`Edit Member in ${activeRole}`}
+            member={newMember}
+            setMember={setNewMember}
+            onClose={() => setEditModalOpen(false)}
+            onSubmit={handleEditMember}
+            handleImageUpload={handleImageUpload}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
