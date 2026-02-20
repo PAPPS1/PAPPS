@@ -485,7 +485,7 @@ const AboutOrganization = () => {
         </div>
       </div>
       {/* ================= MOBILE VIEW ================= */}
-      <div className="block md:hidden bg-gradient-to-b from-[#fff8ef] to-white min-h-screen">
+      <div className="block md:hidden bg-linear-to-b from-[#fff8ef] to-white min-h-screen">
         {/* ===== Header ===== */}
         <div className="px-4 pt-4 pb-3 bg-white border-b border-orange-100">
           <h2 className="text-base font-bold text-slate-800">
@@ -506,7 +506,7 @@ const AboutOrganization = () => {
                   onClick={() => handleRoleClick(role)}
                   className="bg-white rounded-xl p-3 border border-orange-100 shadow-sm active:scale-95 transition"
                 >
-                  <h3 className="text-sm font-semibold text-green-700 break-words">
+                  <h3 className="text-sm font-semibold text-green-700 wrap-break-word">
                     {role}
                   </h3>
                 </div>
@@ -532,7 +532,7 @@ const AboutOrganization = () => {
                   onClick={() => handleDirectorateClick(dir)}
                   className="bg-white rounded-xl p-3 border border-orange-100 shadow-sm active:scale-95 transition"
                 >
-                  <h4 className="text-sm font-semibold text-green-700 break-words">
+                  <h4 className="text-sm font-semibold text-green-700 wrap-break-word">
                     {dir}
                   </h4>
                 </div>
@@ -623,7 +623,7 @@ const AboutOrganization = () => {
           <div className="fixed inset-0 bg-black/40 z-50 flex items-end">
             <div className="bg-white w-full rounded-t-3xl p-4 max-h-[85vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="text-sm font-bold text-slate-800 break-words">
+                <h3 className="text-sm font-bold text-slate-800 wrap-break-word">
                   {activeProfile.name}
                 </h3>
                 <button
@@ -646,7 +646,7 @@ const AboutOrganization = () => {
                 {activeProfile.role}
               </p>
 
-              <p className="text-[11px] text-slate-700 mt-3 leading-relaxed break-words">
+              <p className="text-[11px] text-slate-700 mt-3 leading-relaxed wrap-break-word">
                 {activeProfile.description}
               </p>
 
