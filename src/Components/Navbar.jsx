@@ -129,10 +129,14 @@ const Navbar = ({ setAuth }) => {
 
   return (
     <div className="w-full relative">
-      {/* TOP BAR */}
-      <div className="w-full bg-[#1f2937] shadow-md">
-        <div
-          className="
+      {/* ================= DESKTOP NAVBAR (UNCHANGED) ================= */}
+      <div className="hidden md:block">
+        {/* -------- ORIGINAL NAVBAR START -------- */}
+
+        {/* TOP BAR */}
+        <div className="w-full bg-[#1f2937] shadow-md">
+          <div
+            className="
       grid grid-cols-1 md:grid-cols-[auto_1fr]
       items-center
       gap-3 md:gap-4
@@ -140,83 +144,148 @@ const Navbar = ({ setAuth }) => {
       py-3 md:py-4
       text-center md:text-left
     "
-        >
-          <img
-            src="/assets/paapslogo.jpg"
-            alt="PAPPS Logo"
-            className="
+          >
+            <img
+              src="/assets/paapslogo.jpg"
+              alt="PAPPS Logo"
+              className="
         h-20 sm:h-24 md:h-32 lg:h-42
         w-auto object-contain
         mx-auto md:mx-0
       "
-          />
+            />
 
-          <h1
-            className="
-        text-white
-        text-[11px] sm:text-sm md:text-lg lg:text-xl
-        font-semibold tracking-wide
-        leading-tight
-      "
-          >
-            Pakistan Association of Phonetics &amp; Phonology Scholars
-          </h1>
-        </div>
-      </div>
-
-      {/* NAV BAR */}
-      <div className="w-full bg-[#FFAC1C] grid grid-cols-2 items-center py-4 px-4 relative z-20">
-        <div className="flex items-center gap-4">
-          <button
-            className="md:hidden text-3xl text-white"
-            onClick={toggleMenu}
-          >
-            <GiHamburgerMenu />
-          </button>
-
-          <div className="hidden md:flex gap-12 font-semibold items-center">
-            {renderLinks()}
+            <h1
+              className="
+    text-[13px]
+    sm:text-[16px]
+    md:text-lg
+    font-semibold
+    tracking-wide
+    leading-tight
+    text-white
+  "
+            >
+              Pakistan Association of Phonetics &amp; Phonology Scholars
+            </h1>
           </div>
         </div>
 
-        <div className="flex justify-end">
-          {auth?.isLoggedIn &&
-          (auth?.role === "admin" || auth?.role === "senior_admin") ? (
-            <Motion.button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-[#FFAC1C] text-white rounded
-                 hover:bg-white hover:text-black! border border-[#FFAC1C]"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+        {/* NAV BAR */}
+        <div className="w-full bg-[#FFAC1C] grid grid-cols-2 items-center py-4 px-4 relative z-20">
+          <div className="flex items-center gap-4">
+            <button
+              className="md:hidden text-3xl text-white"
+              onClick={toggleMenu}
             >
-              Logout
-            </Motion.button>
-          ) : (
-            <Motion.button
-              onClick={() => {
-                closeMenu();
-                navigate("/admin/login");
-              }}
-              className="px-4 py-2 bg-[#FFAC1C] text-white rounded
+              <GiHamburgerMenu />
+            </button>
+
+            <div className="hidden md:flex gap-12 font-semibold items-center">
+              {renderLinks()}
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            {auth?.isLoggedIn &&
+            (auth?.role === "admin" || auth?.role === "senior_admin") ? (
+              <Motion.button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-[#FFAC1C] text-white rounded
                  hover:bg-white hover:text-black! border border-[#FFAC1C]"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Logout
+              </Motion.button>
+            ) : (
+              <Motion.button
+                onClick={() => {
+                  closeMenu();
+                  navigate("/admin/login");
+                }}
+                className="px-4 py-2 bg-[#FFAC1C] text-white rounded
+                 hover:bg-white hover:text-black! border border-[#FFAC1C]"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Admin
+              </Motion.button>
+            )}
+          </div>
+
+          {menuOpen && (
+            <Motion.div
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={menuVariants}
+              className="absolute top-full left-0 w-full bg-[#FFAC1C] flex flex-col gap-4 p-4 md:hidden z-20"
             >
-              Admin
-            </Motion.button>
+              {renderLinks(true)}
+            </Motion.div>
           )}
         </div>
 
-        {/* MOBILE MENU */}
+        {/* -------- ORIGINAL NAVBAR END -------- */}
+      </div>
+
+      {/* ================= MOBILE NAVBAR (NEW DESIGN) ================= */}
+      <div className="block md:hidden bg-[#1f2937] text-white">
+        {/* Compact Header */}
+        <div className="flex items-center px-4 py-4 border-b border-gray-700">
+          {/* Logo */}
+          <img
+            src="/assets/paapslogo.jpg"
+            alt="PAPPS Logo"
+            className="h-11 w-auto object-contain"
+          />
+
+          {/* Center Text */}
+          <div className="flex-1 px-2 text-center leading-tight">
+            <p className="text-[11px] font-bold">
+              Pakistan Association of Phonetics &amp; Phonology Scholars
+            </p>
+          </div>
+
+          {/* Hamburger */}
+          <button className="text-2xl" onClick={toggleMenu}>
+            <GiHamburgerMenu />
+          </button>
+        </div>
+
+        {/* Slide Down Menu */}
         {menuOpen && (
           <Motion.div
             initial="hidden"
             animate="visible"
             exit="exit"
             variants={menuVariants}
-            className="absolute top-full left-0 w-full bg-[#FFAC1C] flex flex-col gap-4 p-4 md:hidden z-20"
+            className="bg-[#FFAC1C] text-white px-4 py-4 flex flex-col gap-4"
           >
             {renderLinks(true)}
+
+            {auth?.isLoggedIn &&
+            (auth?.role === "admin" || auth?.role === "senior_admin") ? (
+              <Motion.button
+                onClick={handleLogout}
+                className="mt-4 py-2 bg-white text-black rounded"
+                whileTap={{ scale: 0.95 }}
+              >
+                Logout
+              </Motion.button>
+            ) : (
+              <Motion.button
+                onClick={() => {
+                  closeMenu();
+                  navigate("/admin/login");
+                }}
+                className="mt-4 py-2 bg-white text-black rounded"
+                whileTap={{ scale: 0.95 }}
+              >
+                Admin
+              </Motion.button>
+            )}
           </Motion.div>
         )}
       </div>

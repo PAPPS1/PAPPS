@@ -62,236 +62,376 @@ const Home = () => {
 
   return (
     <div className="Home w-full">
-      {/* ================= SLIDER ================= */}
-      <div className="bg-[#f1f5f2] mt-2 border-b-2 relative overflow-hidden">
-        <div className="relative w-full max-sm:aspect-16/4 sm:aspect-16/4 md:aspect-16/3 overflow-hidden">
-          <div
-            className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {images.map((img, index) => (
-              <div
-                key={index}
-                className="w-full shrink-0 h-full max-md:bg-contain bg-center bg-contain bg-no-repeat "
-                style={{ backgroundImage: `url(${img})` }}
-              />
-            ))}
+      {/* ================= DESKTOP DESIGN (UNCHANGED) ================= */}
+      <div className="hidden md:block">
+        {/* ================= SLIDER ================= */}
+        <div className="bg-[#f1f5f2] mt-2 border-b-2 relative overflow-hidden">
+          <div className="relative w-full max-sm:aspect-16/4 sm:aspect-16/4 md:aspect-16/3 overflow-hidden">
+            <div
+              className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {images.map((img, index) => (
+                <div
+                  key={index}
+                  className="w-full shrink-0 h-full max-md:bg-contain bg-center bg-contain bg-no-repeat "
+                  style={{ backgroundImage: `url(${img})` }}
+                />
+              ))}
+            </div>
           </div>
         </div>
+
+        {/* ================= CARDS ================= */}
+        <div className="bg-[#f1f5f2] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-4 sm:p-6 border-b-2 justify-items-center">
+          {cards.map((card, i) => {
+            const CardContent = (
+              <div className="w-full max-w-xs sm:max-w-sm bg-[#FFAC1C] rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
+                <div className="w-full aspect-4/3 overflow-hidden">
+                  <img
+                    src={card.image}
+                    alt="Card"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div className="p-4">
+                  <h5 className="text-lg font-semibold mb-2 text-black">
+                    {card.title}
+                  </h5>
+                  <p className="text-gray-700 mb-4 text-sm">
+                    Some quick example text to build on the card title.
+                  </p>
+                  <button
+                    className="inline-block bg-white text-black px-4 py-2 rounded
+                    transition-all duration-300 ease-in-out
+                    hover:bg-gray-200 active:scale-95"
+                  >
+                    {card.title}
+                  </button>
+                </div>
+              </div>
+            );
+
+            return card.link ? (
+              <Link
+                key={i}
+                to={card.link}
+                className="w-full flex justify-center no-underline!"
+              >
+                {CardContent}
+              </Link>
+            ) : (
+              <div key={i} className="w-full flex justify-center">
+                {CardContent}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ================= NEWS & LINKS ================= */}
+        <div className="bg-[#f1f5f2] grid grid-cols-1 md:grid-cols-2 gap-8 p-4 sm:p-8 md:p-10 justify-items-center">
+          {/* NEWS */}
+          <div className="w-full max-w-2xl">
+            <h4 className="text-lg font-semibold">News and Events</h4>
+            <hr className="border-t-4 border-blue-700 my-6" />
+
+            <ul className="space-y-4">
+              {Array.isArray(newsItems) && newsItems.length > 0 ? (
+                newsItems.map((item) => (
+                  <li
+                    key={item._id}
+                    className="bg-white rounded p-4 shadow-sm transition hover:bg-blue-50"
+                  >
+                    <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
+                    <p className="text-gray-700 text-sm wrap-break-word">
+                      {item.paragraph}
+                    </p>
+                  </li>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No news available.</p>
+              )}
+            </ul>
+          </div>
+
+          {/* LINKS */}
+          <div className="w-full max-w-2xl">
+            <h3 className="text-lg font-medium">Important Links</h3>
+            <hr className="border-t-4 border-blue-700 my-6" />
+
+            <ul className="space-y-2 no-underline!">
+              {[
+                { label: "Certificates", path: "/certificates" },
+                {
+                  label: "Facebook",
+                  external: "https://www.facebook.com/share/1LnqbMvKXJ/",
+                },
+                {
+                  label: "LinkedIn",
+                  external: "https://www.linkedin.com/company/papps_pak/",
+                },
+                {
+                  label: "WhatsApp",
+                  external:
+                    "https://whatsapp.com/channel/0029VbCeuh76RGJKubuHt50A",
+                },
+              ].map((item, i) => (
+                <li
+                  key={i}
+                  className="bg-white rounded p-3 shadow-sm transition hover:bg-blue-50"
+                >
+                  {item.path ? (
+                    <Link
+                      to={item.path}
+                      className="block w-full px-4 py-2 rounded-lg bg-white
+                      text-[#FFAC1C]! font-bold shadow-sm
+                      transition-all duration-200
+                      hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.external}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full px-4 py-2 rounded-lg bg-white
+                      text-[#FFAC1C]! font-bold shadow-sm
+                      transition-all duration-200
+                      hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
+                    >
+                      {item.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* ================= FOOTER ================= */}
+        <footer className="bg-[#1f2937] text-gray-300 pt-10 pb-6 mt-10">
+          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-white text-lg font-semibold mb-4">
+                About PAPPS
+              </h3>
+              <p className="text-sm leading-relaxed">
+                Pakistan Association of Phonetics & Phonology Scholars (PAPPS)
+                is a non-profit academic body dedicated to the advancement of
+                phonetics and phonology research in Pakistan.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-white text-lg font-semibold mb-4">
+                Quick Links
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link to="/home" className="hover:text-[#FFAC1C] transition">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/membership"
+                    className="hover:text-[#FFAC1C] transition"
+                  >
+                    Membership
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/events"
+                    className="hover:text-[#FFAC1C] transition"
+                  >
+                    Events
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/certificates"
+                    className="hover:text-[#FFAC1C] transition"
+                  >
+                    Certificates
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/studycorner"
+                    className="hover:text-[#FFAC1C] transition"
+                  >
+                    Study Corner
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white text-lg font-semibold mb-4">
+                Academic Focus
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>Phonetics Research</li>
+                <li>Phonological Theory</li>
+                <li>Speech Sound Analysis</li>
+                <li>Pakistani Languages</li>
+                <li>Workshops & Webinars</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-white text-lg font-semibold mb-4">
+                Contact Us
+              </h3>
+              <p className="text-sm mb-2">Email: papps.pak@gmail.com</p>
+              <p className="text-sm mb-2">Pakistan</p>
+              <p className="text-sm">Academic • Non-Profit • Research-Based</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-600 mt-10 pt-4 text-center text-sm text-gray-400">
+            © {new Date().getFullYear()} PAPPS. All Rights Reserved.
+          </div>
+        </footer>
       </div>
 
-      {/* ================= CARDS ================= */}
-      <div className="bg-[#f1f5f2] grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-4 sm:p-6 border-b-2 justify-items-center">
-        {cards.map((card, i) => {
-          const CardContent = (
-            <div className="w-full max-w-xs sm:max-w-sm bg-[#FFAC1C] rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-              {/* Aspect ratio wrapper for image */}
-              <div className="w-full aspect-4/3 overflow-hidden">
-                <img
-                  src={card.image}
-                  alt="Card"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+      {/* ================= MOBILE DESIGN  ================= */}
+      <div className="block md:hidden bg-[#f8faf9]">
+        {/* ===== Responsive Image Header (No Zoom) ===== */}
+        <div
+          className="
+    w-full
+    h-26
+    sm:h-38
+    bg-contain
+    bg-center
+    bg-no-repeat
+    bg-[#FFAC1C]
+  "
+          style={{ backgroundImage: "url('/assets/slider1.jpeg')" }}
+        />
 
-              <div className="p-4">
-                <h5 className="text-lg font-semibold mb-2 text-black">
-                  {card.title}
-                </h5>
-                <p className="text-gray-700 mb-4 text-sm">
-                  Some quick example text to build on the card title.
-                </p>
-                <button
-                  className="inline-block bg-white text-black px-4 py-2 rounded
-                  transition-all duration-300 ease-in-out
-                  hover:bg-gray-200 active:scale-95"
-                >
-                  {card.title}
-                </button>
-              </div>
-            </div>
-          );
-
-          return card.link ? (
+        {/* ===== 2 Column Action Grid ===== */}
+        <div className="grid grid-cols-2 gap-3 px-4 py-5">
+          {cards.map((card, i) => (
             <Link
               key={i}
-              to={card.link}
-              className="w-full flex justify-center no-underline!"
+              to={card.link || "#"}
+              className="bg-white rounded-lg no-underline! text-slate-600! shadow-sm overflow-hidden"
             >
-              {CardContent}
+              <div className="aspect-4/3">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="w-full h-full no-underline! object-cover"
+                />
+              </div>
+              <div className="p-2 text-xs font-medium no-underline! text-center">
+                {card.title}
+              </div>
             </Link>
-          ) : (
-            <div key={i} className="w-full flex justify-center">
-              {CardContent}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ================= NEWS & LINKS ================= */}
-      <div className="bg-[#f1f5f2] grid grid-cols-1 md:grid-cols-2 gap-8 p-4 sm:p-8 md:p-10 justify-items-center">
-        {/* NEWS */}
-        <div className="w-full max-w-2xl">
-          <h4 className="text-lg font-semibold">News and Events</h4>
-          <hr className="border-t-4 border-blue-700 my-6" />
-
-          <ul className="space-y-4">
-            {Array.isArray(newsItems) && newsItems.length > 0 ? (
-              newsItems.map((item) => (
-                <li
-                  key={item._id}
-                  className="bg-white rounded p-4 shadow-sm transition hover:bg-blue-50"
-                >
-                  <h4 className="font-semibold text-sm mb-1">{item.title}</h4>
-                  <p className="text-gray-700 text-sm wrap-break-word">
-                    {item.paragraph}
-                  </p>
-                </li>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No news available.</p>
-            )}
-          </ul>
+          ))}
         </div>
 
-        {/* LINKS */}
-        <div className="w-full max-w-2xl">
-          <h3 className="text-lg font-medium">Important Links</h3>
-          <hr className="border-t-4 border-blue-700 my-6" />
-
-          <ul className="space-y-2 no-underline!">
-            {[
-              { label: "Certificates", path: "/certificates" },
-              {
-                label: "Facebook",
-                external: "https://www.facebook.com/share/1LnqbMvKXJ/",
-              },
-              {
-                label: "LinkedIn",
-                external: "https://www.linkedin.com/company/papps_pak/",
-              },
-              {
-                label: "WhatsApp",
-                external:
-                  "https://whatsapp.com/channel/0029VbCeuh76RGJKubuHt50A",
-              },
-            ].map((item, i) => (
-              <li
-                key={i}
-                className="bg-white rounded p-3 shadow-sm transition hover:bg-blue-50"
-              >
-                {item.path ? (
-                  <Link
-                    to={item.path}
-                    className="block w-full px-4 py-2 rounded-lg bg-white
-                    text-[#FFAC1C]! font-bold shadow-sm
-                    transition-all duration-200
-                    hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <a
-                    href={item.external}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-2 rounded-lg bg-white
-                    text-[#FFAC1C]! font-bold shadow-sm
-                    transition-all duration-200
-                    hover:bg-[#FFAC1C] hover:text-white active:scale-95 no-underline!"
-                  >
-                    {item.label}
-                  </a>
-                )}
-              </li>
+        {/* ===== News + Important Links ===== */}
+        <div className="grid grid-cols-2 gap-4 px-4 pb-6">
+          {/* News */}
+          <div className="bg-white p-3 rounded-lg shadow-sm">
+            <h4 className="text-xs font-semibold mb-2">News</h4>
+            {newsItems.slice(0, 3).map((item) => (
+              <div key={item._id} className="mb-2">
+                <p className="text-xs font-medium truncate">{item.title}</p>
+                <p className="text-[11px] text-gray-600 line-clamp-2">
+                  {item.paragraph}
+                </p>
+              </div>
             ))}
-          </ul>
+          </div>
+
+          {/* Important Links */}
+          <div className="bg-white p-3 rounded-lg shadow-sm">
+            <h4 className="text-xs font-semibold mb-2">Links</h4>
+            <div className="space-y-2">
+              <Link
+                to="/certificates"
+                className="block text-xs bg-[#FFAC1C] no-underline! text-white py-1.5 rounded text-center"
+              >
+                Certificates
+              </Link>
+              <a
+                href="https://www.facebook.com/share/1LnqbMvKXJ/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs bg-[#FFAC1C] text-white no-underline! py-1.5 rounded text-center"
+              >
+                Facebook
+              </a>
+              <a
+                href="https://www.linkedin.com/company/papps_pak/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs bg-[#FFAC1C] text-white no-underline! py-1.5 rounded text-center"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://whatsapp.com/channel/0029VbCeuh76RGJKubuHt50A"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs bg-[#FFAC1C] text-white no-underline! py-1.5 rounded text-center"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== Compact Mobile Footer ===== */}
+        <div className="bg-[#1f2937] text-gray-300 px-4 py-6 text-xs">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-white font-semibold mb-2 text-xs">
+                Quick Links
+              </h4>
+              <ul className="space-y-1">
+                <li>
+                  <Link className="no-underline!" to="/home">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link className="no-underline!" to="/membership">
+                    Membership
+                  </Link>
+                </li>
+                <li>
+                  <Link className="no-underline!" to="/events">
+                    Events
+                  </Link>
+                </li>
+                <li>
+                  <Link className="no-underline!" to="/studycorner">
+                    Study Corner
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-2 text-xs">Contact</h4>
+              <p>Email: papps.pak@gmail.com</p>
+              <p>Pakistan</p>
+            </div>
+          </div>
+
+          <div className="text-center text-[11px] text-gray-400 mt-6">
+            © {new Date().getFullYear()} PAPPS
+          </div>
         </div>
       </div>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="bg-[#1f2937] text-gray-300 pt-10 pb-6 mt-10">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-white text-lg font-semibold mb-4">
-              About PAPPS
-            </h3>
-            <p className="text-sm leading-relaxed">
-              Pakistan Association of Phonetics & Phonology Scholars (PAPPS) is
-              a non-profit academic body dedicated to the advancement of
-              phonetics and phonology research in Pakistan.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-white text-lg font-semibold mb-4">
-              Quick Links
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/home" className="hover:text-[#FFAC1C] transition">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/membership"
-                  className="hover:text-[#FFAC1C] transition"
-                >
-                  Membership
-                </Link>
-              </li>
-              <li>
-                <Link to="/events" className="hover:text-[#FFAC1C] transition">
-                  Events
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/certificates"
-                  className="hover:text-[#FFAC1C] transition"
-                >
-                  Certificates
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/studycorner"
-                  className="hover:text-[#FFAC1C] transition"
-                >
-                  Study Corner
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white text-lg font-semibold mb-4">
-              Academic Focus
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>Phonetics Research</li>
-              <li>Phonological Theory</li>
-              <li>Speech Sound Analysis</li>
-              <li>Pakistani Languages</li>
-              <li>Workshops & Webinars</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white text-lg font-semibold mb-4">
-              Contact Us
-            </h3>
-            <p className="text-sm mb-2">Email: papps.pak@gmail.com</p>
-            <p className="text-sm mb-2">Pakistan</p>
-            <p className="text-sm">Academic • Non-Profit • Research-Based</p>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-600 mt-10 pt-4 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} PAPPS. All Rights Reserved.
-        </div>
-      </footer>
     </div>
   );
 };
