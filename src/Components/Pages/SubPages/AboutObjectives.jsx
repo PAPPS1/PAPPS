@@ -67,7 +67,7 @@ const AboutObjectives = () => {
       </div>
 
       {/* ================= MOBILE VIEW (Refined & Compact) ================= */}
-      <div className="block md:hidden bg-gradient-to-b from-[#fff8ef] to-white pb-6">
+      <div className="block md:hidden bg-linear-to-b from-[#fff8ef] to-white pb-6">
         <div className="px-4 pt-5 pb-2 max-w-lg mx-auto">
           {/* Header */}
           <h2 className="text-base font-semibold text-green-600 mb-4 tracking-wide">

@@ -77,16 +77,23 @@ const AboutOrganization = () => {
       }
 
       if (memberId) {
-        const member = membersData.find((m) => m._id === memberId);
-        if (member) {
-          setActiveProfile(member);
-          setActiveRole(member.roleCategory);
+        const loadProfile = async () => {
+          try {
+            const res = await axios.get(`${API_URL}/${memberId}`);
+            const fullMember = res.data;
 
-          // If member is from directorates, show directorates section
-          if (directorates.includes(member.roleCategory)) {
-            setShowDirectorates(true);
+            setActiveProfile(fullMember);
+            setActiveRole(fullMember.roleCategory);
+
+            if (directorates.includes(fullMember.roleCategory)) {
+              setShowDirectorates(true);
+            }
+          } catch {
+            console.error("Failed to load profile from URL");
           }
-        }
+        };
+
+        loadProfile();
       }
 
       setIsInitialized(true);
@@ -268,13 +275,22 @@ const AboutOrganization = () => {
     updateURL({ role: dir, member: null, directorates: "true" });
   };
 
-  const handleProfileClick = (member) => {
-    setActiveProfile(member);
-    updateURL({
-      member: member._id,
-      role: member.roleCategory,
-      directorates: directorates.includes(member.roleCategory) ? "true" : null,
-    });
+  const handleProfileClick = async (member) => {
+    try {
+      const res = await axios.get(`${API_URL}/${member._id}`);
+
+      setActiveProfile(res.data);
+
+      updateURL({
+        member: member._id,
+        role: member.roleCategory,
+        directorates: directorates.includes(member.roleCategory)
+          ? "true"
+          : null,
+      });
+    } catch {
+      console.error("Failed to load profile");
+    }
   };
 
   const handleCloseRole = () => {
@@ -586,13 +602,9 @@ const AboutOrganization = () => {
                   )}
 
                   <div className="flex items-center gap-3">
-                    {m.image && (
-                      <img
-                        src={m.image}
-                        alt={m.name}
-                        className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full object-cover border border-green-100 shrink-0"
-                      />
-                    )}
+                    <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-bold text-sm">
+                      {m.name?.charAt(0).toUpperCase()}
+                    </div>
 
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-slate-800 leading-tight line-clamp-2">
@@ -766,13 +778,9 @@ const MembersGrid = ({
         </button>
 
         <div onClick={() => onProfileClick(m)} className="cursor-pointer">
-          {m.image && (
-            <img
-              src={m.image}
-              alt={m.name}
-              className="w-24 h-24 mx-auto rounded-full object-cover mb-3 border-2 border-green-100"
-            />
-          )}
+          <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-bold text-sm">
+            {m.name?.charAt(0).toUpperCase()}
+          </div>
           <h4 className="font-bold text-gray-800">{m.name}</h4>
           <p className="text-sm text-green-700 font-semibold">{m.role}</p>
           {m.affiliation && (

@@ -1,20 +1,38 @@
 import OrgMember from "../models/OrgMember.js";
 
-// GET all members
+/* ================= GET ALL MEMBERS (NO IMAGE) ================= */
 export const getOrgMembers = async (req, res) => {
   try {
-    const members = await OrgMember.find({});
-    res.json(members); // Return array of all members
+    // Exclude heavy base64 image field
+    const members = await OrgMember.find({}).select("-image");
+
+    return res.status(200).json(members);
   } catch (err) {
     console.error("Error fetching members:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
-// ADD new member
+/* ================= GET SINGLE MEMBER (WITH IMAGE) ================= */
+export const getSingleOrgMember = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const member = await OrgMember.findById(id);
+    if (!member) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+
+    return res.status(200).json(member);
+  } catch (err) {
+    console.error("Error fetching single member:", err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+/* ================= ADD MEMBER ================= */
 export const addOrgMember = async (req, res) => {
   try {
-    console.log("REQ BODY:", req.body);
     const {
       name,
       role,
@@ -47,18 +65,20 @@ export const addOrgMember = async (req, res) => {
 
     await newMember.save();
 
-    const allMembers = await OrgMember.find({});
-    res.json(allMembers);
+    // Return lightweight list
+    const allMembers = await OrgMember.find({}).select("-image");
+
+    return res.status(201).json(allMembers);
   } catch (err) {
     console.error("Error adding member:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
-// UPDATE member
+/* ================= UPDATE MEMBER ================= */
 export const updateOrgMember = async (req, res) => {
   try {
-    console.log("UPDATE BODY:", req.body);
+    const { id } = req.params;
 
     const {
       name,
@@ -72,14 +92,14 @@ export const updateOrgMember = async (req, res) => {
       website,
     } = req.body;
 
-    const { id } = req.params;
-
     if (!id || !name || !role || !roleCategory) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const member = await OrgMember.findById(id);
-    if (!member) return res.status(404).json({ error: "Member not found" });
+    if (!member) {
+      return res.status(404).json({ error: "Member not found" });
+    }
 
     member.name = name;
     member.role = role;
@@ -87,35 +107,43 @@ export const updateOrgMember = async (req, res) => {
     member.tenure = tenure;
     member.description = description;
     member.affiliation = affiliation;
-    member.image = image;
 
-    // 🔥 Only update if actually sent
+    if (image !== undefined) member.image = image;
     if (linkedin !== undefined) member.linkedin = linkedin;
     if (website !== undefined) member.website = website;
 
     await member.save();
 
-    const allMembers = await OrgMember.find({});
-    res.json(allMembers);
+    // Return lightweight list
+    const allMembers = await OrgMember.find({}).select("-image");
+
+    return res.status(200).json(allMembers);
   } catch (err) {
     console.error("Error updating member:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
-// DELETE member
+/* ================= DELETE MEMBER ================= */
 export const deleteOrgMember = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id) return res.status(400).json({ error: "Missing member id" });
+
+    if (!id) {
+      return res.status(400).json({ error: "Missing member id" });
+    }
 
     const member = await OrgMember.findByIdAndDelete(id);
-    if (!member) return res.status(404).json({ error: "Member not found" });
+    if (!member) {
+      return res.status(404).json({ error: "Member not found" });
+    }
 
-    const allMembers = await OrgMember.find({});
-    res.json(allMembers);
+    // Return lightweight list
+    const allMembers = await OrgMember.find({}).select("-image");
+
+    return res.status(200).json(allMembers);
   } catch (err) {
     console.error("Error deleting member:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
