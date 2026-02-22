@@ -1,27 +1,33 @@
 import express from "express";
 import {
   getOrgMembers,
-  getSingleOrgMember, // ✅ NEW
+  getSingleOrgMember,
   addOrgMember,
   updateOrgMember,
   deleteOrgMember,
+  upload, // ✅ import multer upload
 } from "../controllers/orgMemberController.js";
 
 const router = express.Router();
 
-// GET all members (WITHOUT image)
+/* ================= GET ROUTES ================= */
+
+// GET all members
 router.get("/", getOrgMembers);
 
-// GET single member (WITH image)
-router.get("/:id", getSingleOrgMember); // ✅ NEW ROUTE
+// GET single member
+router.get("/:id", getSingleOrgMember);
 
-// ADD new member
-router.post("/", addOrgMember);
+/* ================= POST / PUT ROUTES (WITH IMAGE UPLOAD) ================= */
 
-// EDIT member by MongoDB _id
-router.put("/:id", updateOrgMember);
+// ADD new member (image upload enabled)
+router.post("/", upload.single("image"), addOrgMember);
 
-// DELETE member by MongoDB _id
+// UPDATE member (image upload enabled)
+router.put("/:id", upload.single("image"), updateOrgMember);
+
+/* ================= DELETE ROUTE ================= */
+
 router.delete("/:id", deleteOrgMember);
 
 export default router;

@@ -156,11 +156,10 @@ const AboutOrganization = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setNewMember((prev) => ({ ...prev, image: reader.result }));
-    };
-    reader.readAsDataURL(file);
+    setNewMember((prev) => ({
+      ...prev,
+      image: file, // store actual file
+    }));
   };
 
   // ================= ADD MEMBER =================
@@ -171,10 +170,22 @@ const AboutOrganization = () => {
     }
 
     try {
-      const res = await axios.post(API_URL, {
-        ...newMember,
-        roleCategory: activeRole,
-      });
+      const formData = new FormData();
+
+      formData.append("name", newMember.name);
+      formData.append("affiliation", newMember.affiliation);
+      formData.append("role", newMember.role);
+      formData.append("roleCategory", activeRole);
+      formData.append("tenure", newMember.tenure);
+      formData.append("description", newMember.description);
+      formData.append("linkedin", newMember.linkedin);
+      formData.append("website", newMember.website);
+
+      if (newMember.image) {
+        formData.append("image", newMember.image);
+      }
+
+      const res = await axios.post(`${API_URL}/${newMember._id}`, formData);
 
       setMembersData(res.data);
       resetForm();
@@ -193,10 +204,22 @@ const AboutOrganization = () => {
     }
 
     try {
-      const res = await axios.put(`${API_URL}/${newMember._id}`, {
-        ...newMember,
-        roleCategory: activeRole,
-      });
+      const formData = new FormData();
+
+      formData.append("name", newMember.name);
+      formData.append("affiliation", newMember.affiliation);
+      formData.append("role", newMember.role);
+      formData.append("roleCategory", activeRole);
+      formData.append("tenure", newMember.tenure);
+      formData.append("description", newMember.description);
+      formData.append("linkedin", newMember.linkedin);
+      formData.append("website", newMember.website);
+
+      if (newMember.image && typeof newMember.image !== "string") {
+        formData.append("image", newMember.image);
+      }
+
+      const res = await axios.put(`${API_URL}/${newMember._id}`, formData);
 
       setMembersData(res.data);
       resetForm();
@@ -602,9 +625,17 @@ const AboutOrganization = () => {
                   )}
 
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-bold text-sm">
-                      {m.name?.charAt(0).toUpperCase()}
-                    </div>
+                    {m.image ? (
+                      <img
+                        src={m.image}
+                        alt={m.name}
+                        className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full object-cover border border-green-100"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">
+                        {m.name?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
 
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-slate-800 leading-tight line-clamp-2">
@@ -778,9 +809,17 @@ const MembersGrid = ({
         </button>
 
         <div onClick={() => onProfileClick(m)} className="cursor-pointer">
-          <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700 font-bold text-sm">
-            {m.name?.charAt(0).toUpperCase()}
-          </div>
+          {m.image ? (
+            <img
+              src={m.image}
+              alt={m.name}
+              className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full object-cover border border-green-100"
+            />
+          ) : (
+            <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">
+              {m.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
           <h4 className="font-bold text-gray-800">{m.name}</h4>
           <p className="text-sm text-green-700 font-semibold">{m.role}</p>
           {m.affiliation && (

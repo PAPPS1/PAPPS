@@ -1,11 +1,16 @@
 import OrgMember from "../models/OrgMember.js";
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
 
-/* ================= GET ALL MEMBERS (NO IMAGE) ================= */
+/* ================= MULTER SETUP ================= */
+const storage = multer.memoryStorage();
+export const upload = multer({ storage });
+
+/* ================= GET ALL MEMBERS ================= */
 export const getOrgMembers = async (req, res) => {
   try {
-    // Exclude heavy base64 image field
-    const members = await OrgMember.find({}).select("-image");
-
+    // Now image is only a URL (small), safe to return
+    const members = await OrgMember.find({});
     return res.status(200).json(members);
   } catch (err) {
     console.error("Error fetching members:", err);
@@ -13,7 +18,7 @@ export const getOrgMembers = async (req, res) => {
   }
 };
 
-/* ================= GET SINGLE MEMBER (WITH IMAGE) ================= */
+/* ================= GET SINGLE MEMBER ================= */
 export const getSingleOrgMember = async (req, res) => {
   try {
     const { id } = req.params;
@@ -33,6 +38,8 @@ export const getSingleOrgMember = async (req, res) => {
 /* ================= ADD MEMBER ================= */
 export const addOrgMember = async (req, res) => {
   try {
+    const body = req.body || {};
+
     const {
       name,
       role,
@@ -40,15 +47,30 @@ export const addOrgMember = async (req, res) => {
       tenure,
       description,
       affiliation,
-      image,
       linkedin,
       website,
-    } = req.body;
+    } = body;
 
     if (!name || !role || !roleCategory) {
       return res
         .status(400)
         .json({ error: "name, role, and roleCategory are required" });
+    }
+
+    let imageUrl = "";
+
+    // Upload to Cloudinary if file exists
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "org_members" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          })
+          .end(req.file.buffer);
+      });
+
+      imageUrl = result.secure_url;
     }
 
     const newMember = new OrgMember({
@@ -58,16 +80,14 @@ export const addOrgMember = async (req, res) => {
       tenure,
       description,
       affiliation,
-      image,
+      image: imageUrl,
       linkedin,
       website,
     });
 
     await newMember.save();
 
-    // Return lightweight list
-    const allMembers = await OrgMember.find({}).select("-image");
-
+    const allMembers = await OrgMember.find({});
     return res.status(201).json(allMembers);
   } catch (err) {
     console.error("Error adding member:", err);
@@ -87,14 +107,9 @@ export const updateOrgMember = async (req, res) => {
       tenure,
       description,
       affiliation,
-      image,
       linkedin,
       website,
     } = req.body;
-
-    if (!id || !name || !role || !roleCategory) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
 
     const member = await OrgMember.findById(id);
     if (!member) {
@@ -107,16 +122,26 @@ export const updateOrgMember = async (req, res) => {
     member.tenure = tenure;
     member.description = description;
     member.affiliation = affiliation;
+    member.linkedin = linkedin;
+    member.website = website;
 
-    if (image !== undefined) member.image = image;
-    if (linkedin !== undefined) member.linkedin = linkedin;
-    if (website !== undefined) member.website = website;
+    // If new image uploaded → replace
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "org_members" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          })
+          .end(req.file.buffer);
+      });
+
+      member.image = result.secure_url;
+    }
 
     await member.save();
 
-    // Return lightweight list
-    const allMembers = await OrgMember.find({}).select("-image");
-
+    const allMembers = await OrgMember.find({}).sort({ createdAt: -1 });
     return res.status(200).json(allMembers);
   } catch (err) {
     console.error("Error updating member:", err);
@@ -129,18 +154,12 @@ export const deleteOrgMember = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id) {
-      return res.status(400).json({ error: "Missing member id" });
-    }
-
     const member = await OrgMember.findByIdAndDelete(id);
     if (!member) {
       return res.status(404).json({ error: "Member not found" });
     }
 
-    // Return lightweight list
-    const allMembers = await OrgMember.find({}).select("-image");
-
+    const allMembers = await OrgMember.find({});
     return res.status(200).json(allMembers);
   } catch (err) {
     console.error("Error deleting member:", err);
