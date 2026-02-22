@@ -771,57 +771,63 @@ const MembersGrid = ({
   onCopyLink,
   isAdmin,
 }) => (
-  <div className="flex flex-wrap justify-center gap-6 mt-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
     {members.map((m) => (
       <div
         key={m._id}
-        className="relative bg-white p-5 rounded-2xl border border-gray-200 shadow hover:shadow-lg hover:border-green-600 transition text-center w-60"
+        className="relative bg-white p-6 rounded-3xl border border-gray-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 text-center"
       >
+        {/* Admin Buttons */}
         {isAdmin && (
-          <div className="absolute top-2 right-2 flex space-x-2">
+          <div className="absolute top-3 right-3 flex space-x-2">
             <button
               onClick={() => onEdit(m)}
-              className="text-blue-600 hover:text-blue-800 font-bold text-lg"
-              title="Edit Member"
+              className="text-blue-600 hover:text-blue-800 text-sm font-bold"
             >
               ✎
             </button>
             <button
               onClick={() => onDelete(m)}
-              className="text-red-600 hover:text-red-800 font-bold text-xl"
-              title="Delete Member"
+              className="text-red-600 hover:text-red-800 text-sm font-bold"
             >
               ×
             </button>
           </div>
         )}
 
-        {/* Copy Link Button */}
+        {/* Copy Link */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             onCopyLink(m);
           }}
-          className="absolute top-2 left-2 text-gray-500 hover:text-blue-600 text-lg"
-          title="Copy Profile Link"
+          className="absolute top-3 left-3 text-gray-400 hover:text-blue-600 text-sm"
         >
           🔗
         </button>
 
-        <div onClick={() => onProfileClick(m)} className="cursor-pointer">
+        {/* CLICK AREA */}
+        <div
+          onClick={() => onProfileClick(m)}
+          className="cursor-pointer flex flex-col items-center"
+        >
+          {/* BIG CENTERED IMAGE */}
           {m.image ? (
             <img
               src={m.image}
               alt={m.name}
-              className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full object-cover border border-green-100"
+              className="w-28 h-28 object-cover rounded-full border-4 border-[#FFAC1C] shadow-md mb-4"
             />
           ) : (
-            <div className="w-12 h-12 min-[480px]:w-14 min-[480px]:h-14 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">
+            <div className="w-28 h-28 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-3xl font-bold mb-4">
               {m.name?.charAt(0).toUpperCase()}
             </div>
           )}
-          <h4 className="font-bold text-gray-800">{m.name}</h4>
-          <p className="text-sm text-green-700 font-semibold">{m.role}</p>
+
+          <h4 className="text-lg font-bold text-gray-800 mb-1">{m.name}</h4>
+
+          <p className="text-green-700 font-semibold text-sm mb-1">{m.role}</p>
+
           {m.affiliation && (
             <p className="text-xs text-gray-500">{m.affiliation}</p>
           )}
